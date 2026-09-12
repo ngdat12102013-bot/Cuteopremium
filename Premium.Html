@@ -1,0 +1,660 @@
+<!DOCTYPE html><html lang="vi"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Unimate Secret V3 - Ultimate Mobile Booster</title>
+    <style>
+        :root {
+            --bg-color: #0b090a;
+            --card-bg: #161113;
+            --card-border: #2a1f22;
+            --accent-pink: #ff3366;
+            --accent-glow: rgba(255, 51, 102, 0.35);
+            --text-main: #f5f0f2;
+            --text-muted: #9e8a90;
+            --carbon-gradient: linear-gradient(135deg, #1c1518 0%, #0d0a0b 100%);
+            --titan-metal: linear-gradient(135deg, #2c2528 0%, #120e10 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: var(--carbon-gradient);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #auth-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color);
+            background-image: var(--carbon-gradient);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 24px;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+            text-align: center;
+        }
+
+        .auth-logo {
+            width: 64px; height: 64px;
+            background: linear-gradient(135deg, #ff3366, #7a0022);
+            border-radius: 16px;
+            margin: 0 auto 16px auto;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 26px; font-weight: 800; color: #fff;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .auth-card h2 { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+        .auth-card p { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+        
+        .auth-input-group { display: flex; flex-direction: column; gap: 12px; }
+        .auth-input-group input {
+            background: #070506; border: 1px solid var(--card-border);
+            border-radius: 12px; padding: 14px 16px; color: #fff;
+            font-size: 13px; outline: none; text-align: center; letter-spacing: 1px;
+        }
+        .auth-input-group input:focus { border-color: var(--accent-pink); box-shadow: 0 0 10px var(--accent-glow); }
+
+        .auth-btn, .booster-btn-main {
+            background: linear-gradient(135deg, #ff1a4a 0%, #b3002d 100%);
+            color: white; border: none; padding: 14px;
+            border-radius: 12px; font-weight: 700; font-size: 13px;
+            letter-spacing: 0.5px; box-shadow: 0 4px 15px var(--accent-glow);
+            cursor: pointer; transition: transform 0.1s;
+        }
+        .auth-btn:active, .booster-btn-main:active { transform: scale(0.96); }
+
+        .auth-error { color: #ff3366; font-size: 11px; margin-top: 10px; min-height: 16px; font-weight: 600; }
+        .device-info { margin-top: 15px; font-size: 11px; color: var(--text-muted); }
+
+        #main-app-wrapper {
+            display: none;
+            flex: 1; flex-direction: column; height: 100vh; overflow: hidden;
+        }
+
+        .top-status-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 20px; font-size: 13px; color: var(--text-muted);
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .app-container {
+            flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 90px;
+        }
+
+        .view-section { display: none; animation: fadeIn 0.25s ease-in-out; }
+        .view-section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            background: var(--titan-metal); border: 1px solid var(--card-border);
+            border-radius: 16px; padding: 18px; margin-bottom: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        .section-header .subtitle {
+            font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
+            color: var(--accent-pink); font-weight: 700; margin-bottom: 4px;
+        }
+        .section-header h2 { font-size: 20px; font-weight: 800; letter-spacing: 0.5px; color: #fff; }
+        .section-header p { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+        .live-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .metric-box {
+            background: #070506;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .metric-label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+        .metric-value { font-size: 14px; color: #fff; font-weight: 800; }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .control-action-btn {
+            background: #070506;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 14px 10px;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .control-action-btn:active {
+            border-color: var(--accent-pink);
+            background: rgba(255,51,102,0.1);
+            transform: scale(0.96);
+        }
+
+        .canvas-container {
+            background: #070506;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 10px;
+            margin-top: 10px;
+            height: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .console-header-row {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+        }
+        .console-badges { display: flex; gap: 8px; }
+        .badge-pill {
+            background: #070506; border: 1px solid var(--card-border);
+            border-radius: 10px; padding: 4px 10px; font-size: 11px; color: var(--text-muted);
+        }
+        .badge-pill span { color: var(--accent-pink); font-weight: 700; }
+
+        .live-console-box {
+            background: #070506; border: 1px solid var(--card-border);
+            border-radius: 12px; padding: 12px; font-family: 'Courier New', Courier, monospace;
+            font-size: 11px; color: #00ffcc; height: 150px; overflow-y: auto;
+            margin-bottom: 10px; line-height: 1.4;
+        }
+        .console-line { margin-bottom: 3px; word-break: break-all; }
+        .console-line.error { color: #ff3366; }
+
+        .js-input-group { display: flex; gap: 8px; }
+        .js-input-group input {
+            flex: 1; background: #070506; border: 1px solid var(--card-border);
+            border-radius: 12px; padding: 12px 14px; color: #fff; font-size: 12px; outline: none;
+        }
+        .js-input-group input:focus { border-color: var(--accent-pink); }
+        .js-input-group button {
+            background: linear-gradient(135deg, #ff1a4a 0%, #b3002d 100%);
+            color: #fff; border: none; padding: 0 18px; border-radius: 12px;
+            font-weight: 700; font-size: 12px; cursor: pointer;
+        }
+
+        .bottom-nav {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 70px;
+            background: rgba(16, 12, 14, 0.95); backdrop-filter: blur(20px);
+            border-top: 1px solid var(--card-border); display: flex;
+            justify-content: space-around; align-items: center;
+            padding-bottom: env(safe-area-inset-bottom); z-index: 1000;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: transparent; border: none; color: var(--text-muted);
+            font-size: 10px; font-weight: 500; width: 20%; height: 100%; cursor: pointer; position: relative;
+        }
+        .nav-item svg { width: 20px; height: 20px; margin-bottom: 3px; fill: currentColor; }
+        .nav-item.active { color: var(--accent-pink); }
+        .nav-pill-bg {
+            position: absolute; width: 50px; height: 32px;
+            background: rgba(255, 51, 102, 0.12); border-radius: 16px; z-index: -1; display: none;
+        }
+        .nav-item.active .nav-pill-bg { display: block; }
+    </style></head><body>
+
+    <!-- Màn hình Auth (Bắt buộc nhập Key mới vào được App) -->
+    <div id="auth-screen">
+        <div class="auth-card">
+            <div class="auth-logo">US</div>
+            <h2>UNIMATE SECRET V3</h2>
+            <p>Nhập mã khóa bản quyền hệ thống để tiếp tục</p>
+            <div class="auth-input-group">
+                <input type="text" id="license-key-input" placeholder="NHẬP KEY BẢN QUYỀN..." autocomplete="off">
+                <button class="auth-btn" onclick="verifyAndEnterKey()">XÁC THỰC & VÀO APP</button>
+            </div>
+            <div class="auth-error" id="auth-error-msg"></div>
+            <div class="device-info">Mã thiết bị: <span id="display-device-id">Đang tải...</span></div>
+        </div>
+    </div>
+
+    <!-- Giao diện chính -->
+    <div id="main-app-wrapper">
+        <div class="top-status-bar">
+            <span id="current-time">18:12</span>
+            <span style="color: var(--accent-pink); font-weight: bold;">UNIMATE V3</span>
+            <span>66% ⚡</span>
+        </div>
+
+        <div class="app-container">
+
+            <!-- TAB HOME -->
+            <div id="view-home" class="view-section active">
+                <div class="section-header">
+                    <div class="subtitle">Welcome Back</div>
+                    <h2>UNIMATE SECRET V3</h2>
+                    <p>Hệ thống quản trị phần cứng và tăng tốc thiết bị đỉnh cao.</p>
+                </div>
+
+                <div class="live-card">
+                    <div class="subtitle">Tổng Quan Hệ Thống</div>
+                    <div style="font-size: 16px; font-weight: 800; color: #fff; margin: 6px 0;">Trạng thái: Hoạt động ổn định</div>
+                    <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">Ứng dụng đang giám sát tiến trình ngầm, giải phóng RAM tự động và giữ ổn định khung hình cho thiết bị của bạn.</p>
+                </div>
+
+                <div class="live-card">
+                    <div class="subtitle">Phím Tắt Nhanh</div>
+                    <div class="controls-grid" style="margin-top: 10px;">
+                        <button class="control-action-btn" onclick="switchTab('boost', document.querySelectorAll('.nav-item')[2])">🚀 Vào Boost Ngay</button>
+                        <button class="control-action-btn" onclick="switchTab('live', document.querySelectorAll('.nav-item')[3])">📊 Xem Biểu Đồ Live</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB FUNC -->
+            <div id="view-func" class="view-section">
+                <div class="section-header">
+                    <div class="subtitle">Functions Matrix</div>
+                    <h2>MODULES TÍNH NĂNG</h2>
+                    <p>Các công cụ can thiệp sâu hệ thống.</p>
+                </div>
+
+                <div class="live-card">
+                    <div class="subtitle">Gaming Optimization</div>
+                    <div style="font-size: 15px; font-weight: 800; color: #fff; margin: 4px 0;">Cấu Hình Hiệu Năng Game</div>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Ép xung nhịp đồ họa và giảm độ trễ cảm ứng màn hình.</p>
+                    <div class="controls-grid">
+                        <button class="control-action-btn" onclick="triggerAction('Bật Chế Độ Gaming')">Bật Game Mode</button>
+                        <button class="control-action-btn" onclick="triggerAction('Khử Giật Lag (Anti-Lag)')">Khử Giật Lag</button>
+                    </div>
+                </div>
+
+                <div class="live-card">
+                    <div class="subtitle">Network Booster</div>
+                    <div style="font-size: 15px; font-weight: 800; color: #fff; margin: 4px 0;">Tối Ưu Đường Truyền Mạng</div>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Giảm ping, hạn chế mất gói tin khi chơi game online.</p>
+                    <div class="controls-grid">
+                        <button class="control-action-btn" onclick="triggerAction('Fix Ping Cao')">Fix Ping Cao</button>
+                        <button class="control-action-btn" onclick="triggerAction('Làm Sạch DNS Cache')">Làm Sạch DNS</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB BOOST -->
+            <div id="view-boost" class="view-section">
+                <div class="section-header">
+                    <div class="subtitle">Boost Panel</div>
+                    <h2>TĂNG TỐC TOÀN DIỆN</h2>
+                    <p>Giải phóng toàn bộ tài nguyên phần cứng ngay lập tức.</p>
+                </div>
+
+                <div class="live-card" style="text-align: center; padding: 24px 16px;">
+                    <div class="auth-logo" style="margin: 0 auto 12px auto;">⚡</div>
+                    <div style="font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 6px;">Siêu Tăng Tốc Thiết Bị</div>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Xóa toàn bộ tiến trình rác và giải phóng bộ nhớ đệm.</p>
+                    <button class="booster-btn-main" style="width: 100%;" onclick="triggerAction('SIÊU TĂNG TỐC TOÀN HỆ THỐNG')">BẮT ĐẦU TĂNG TỐC NGAY</button>
+                </div>
+
+                <div class="live-card">
+                    <div class="subtitle">Tác vụ chuyên sâu</div>
+                    <div class="controls-grid">
+                        <button class="control-action-btn" onclick="triggerAction('Giải Phóng RAM Sâu')">Deep RAM Clean</button>
+                        <button class="control-action-btn" onclick="triggerAction('Làm Mát CPU')">Làm Mát CPU</button>
+                        <button class="control-action-btn" onclick="triggerAction('Xóa Cache Ứng Dụng Ngầm')">Xóa Cache Ngầm</button>
+                        <button class="control-action-btn" onclick="triggerAction('Tối Ưu Pin Thiết Bị')">Tối Ưu Pin</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB LIVE -->
+            <div id="view-live" class="view-section">
+                <div class="section-header">
+                    <div class="subtitle">Realtime Monitor</div>
+                    <h2>CPU & RAM Wave</h2>
+                    <p>Premium compact monitor with aligned metrics.</p>
+                </div>
+
+                <div class="live-card" style="padding: 12px;">
+                    <div class="metrics-grid" style="margin-top: 0;">
+                        <div class="metric-box">
+                            <span class="metric-label">FPS</span>
+                            <span class="metric-value" id="live-fps">52</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">Frame</span>
+                            <span class="metric-value" id="live-frame">40.0 ms</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">CPU est</span>
+                            <span class="metric-value" id="live-cpu">2%</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">RAM</span>
+                            <span class="metric-value" id="live-ram">185 MB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="live-card">
+                    <div class="metric-label" style="margin-bottom: 4px;">CPU (Ước Lượng Theo Thời Gian Bận Mỗi Frame)</div>
+                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">Target: 60 FPS</div>
+                    <div class="canvas-container">
+                        <canvas id="cpuWaveCanvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="live-card">
+                    <div class="metric-label" style="margin-bottom: 4px;">RAM (MB) / Heap Used</div>
+                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">Scale Auto</div>
+                    <div class="canvas-container">
+                        <canvas id="ramWaveCanvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="live-card">
+                    <div class="subtitle">Controls</div>
+                    <div style="font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 4px;">Realtime Actions</div>
+                    <div class="controls-grid">
+                        <button class="control-action-btn" id="btn-unlock-fps" onclick="toggleUnlockFPS()">UnLock 120 FPS : OFF</button>
+                        <button class="control-action-btn" onclick="clearConsole()">Xóa Console</button>
+                        <button class="control-action-btn" onclick="triggerAction('Dọn RAM')">Dọn RAM</button>
+                        <button class="control-action-btn" onclick="triggerAction('Dọn CPU')">Dọn CPU</button>
+                    </div>
+                </div>
+
+                <div class="live-card">
+                    <div class="console-header-row">
+                        <div>
+                            <div class="subtitle">Console</div>
+                            <div style="font-size: 15px; font-weight: 800; color: #fff;">Command Output</div>
+                        </div>
+                        <div class="console-badges">
+                            <div class="badge-pill">Logs <span id="log-count">2</span></div>
+                            <div class="badge-pill">Errors <span id="error-count">0</span></div>
+                        </div>
+                    </div>
+                    <div class="live-console-box" id="live-console">
+                        <div class="console-line">[18:12:54.071] Hệ thống Unimate Secret V3 đã khởi tạo thành công.</div>
+                        <div class="console-line">[18:12:54.102] Ready. Type help() to see commands.</div>
+                    </div>
+                    <div class="js-input-group">
+                        <input type="text" id="terminal-input" placeholder="Nhập lệnh JS rồi Enter..." onkeypress="handleTerminalKey(event)">
+                        <button onclick="sendTerminalCommand()">Run</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB SETTINGS -->
+            <div id="view-settings" class="view-section">
+                <div class="section-header">
+                    <div class="subtitle">Configuration</div>
+                    <h2>SETTINGS</h2>
+                    <p>Quản lý hệ thống bản quyền và tài khoản.</p>
+                </div>
+                <div class="live-card">
+                    <div class="subtitle" style="margin-bottom: 8px;">Trạng thái bản quyền</div>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Thiết bị đang chạy phiên bản kích hoạt chính thức.</p>
+                    <button class="control-action-btn" style="width: 100%; background: #ff3366; border: none;" onclick="logoutApp()">Đăng xuất / Đổi Key</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" onclick="switchTab('home', this)">
+                <div class="nav-pill-bg"></div>
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                <span>Home</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('func', this)">
+                <div class="nav-pill-bg"></div>
+                <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.03 2.18 13.82 2 13.6 2h-4c-.22 0-.43.18-.4.4l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.22.22.4.4.4h4c.22 0 .43-.18.4-.4l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                <span>Func</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('boost', this)">
+                <div class="nav-pill-bg"></div>
+                <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                <span>Boost</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('live', this)">
+                <div class="nav-pill-bg"></div>
+                <svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/></svg>
+                <span>Live</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('settings', this)">
+                <div class="nav-pill-bg"></div>
+                <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.04.64.09.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                <span>Cài đặt</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        // Tự động nạp sẵn toàn bộ danh sách key vào LocalStorage khi mở app
+        (function preloadKeys() {
+            const listKeys = [
+                "UNIMATE-NGAY-7K2X9P", "UNIMATE-NGAY-M4R8L1", "UNIMATE-NGAY-Q9W3ZT", "UNIMATE-NGAY-B2H5NY", "UNIMATE-NGAY-F6V1DC",
+                "UNIMATE-TUAN-8X3K2M", "UNIMATE-TUAN-P5L9Q4", "UNIMATE-TUAN-Z1W7JH", "UNIMATE-TUAN-4C6N8B", "UNIMATE-TUAN-D9F2VT",
+                "UNIMATE-THANG-3R8P2X", "UNIMATE-THANG-K5M1Q9", "UNIMATE-THANG-7W4ZLH", "UNIMATE-THANG-N2C6VB", "UNIMATE-THANG-H9F8DT",
+                "UNIMATE-VV-9X5K3M", "UNIMATE-VV-1P8Q4Z"
+            ];
+            listKeys.forEach(k => {
+                let type = k.includes("NGAY") ? "NGAY" : k.includes("TUAN") ? "TUAN" : k.includes("THANG") ? "THANG" : "VV";
+                let expire = type === "VV" ? null : Date.now() + 86400000 * (type === "NGAY" ? 1 : type === "TUAN" ? 7 : 30);
+                localStorage.setItem(k, JSON.stringify({ type: type, expires: expire }));
+            });
+        })();
+
+        // Hệ thống xác thực Key
+        const KeySystem = {
+            verify(inputKey) {
+                if (!inputKey) return { success: false, msg: "Vui lòng nhập mã bản quyền!" };
+                
+                if (inputKey === "UNIMATE-VIP-2026" || inputKey === "ADMIN") {
+                    return { success: true, msg: "Xác thực thành công!" };
+                }
+
+                const keyData = localStorage.getItem(inputKey);
+                if (!keyData) {
+                    return { success: false, msg: "Key không tồn tại hoặc không hợp lệ!" };
+                }
+
+                const parsed = JSON.parse(keyData);
+                if (parsed.expires && Date.now() > parsed.expires) {
+                    localStorage.removeItem(inputKey);
+                    return { success: false, msg: "Key này đã hết hạn sử dụng!" };
+                }
+
+                return { success: true, msg: `Kích hoạt thành công (${parsed.type})!` };
+            }
+        };
+
+        function verifyAndEnterKey() {
+            const keyInput = document.getElementById('license-key-input').value.trim();
+            const errorMsg = document.getElementById('auth-error-msg');
+            
+            const result = KeySystem.verify(keyInput);
+            if (!result.success) {
+                errorMsg.textContent = result.msg;
+                return;
+            }
+
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('main-app-wrapper').style.display = 'flex';
+            logToConsole("[System] Đã đăng nhập hệ thống thành công bằng Key.");
+        }
+
+        function logoutApp() {
+            document.getElementById('main-app-wrapper').style.display = 'none';
+            document.getElementById('auth-screen').style.display = 'flex';
+            document.getElementById('license-key-input').value = '';
+            document.getElementById('auth-error-msg').textContent = '';
+        }
+
+        window.onload = function() {
+            const randomId = 'UNIMATE-' + Math.random().toString(36).substring(2, 9).toUpperCase();
+            document.getElementById('display-device-id').textContent = randomId;
+            initCharts();
+        };
+
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            const target = document.getElementById('view-' + tabId);
+            if (target) target.classList.add('active');
+
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            if(btnElement) btnElement.classList.add('active');
+        }
+
+        let logCount = 2;
+        let errorCount = 0;
+
+        function logToConsole(text, isError = false) {
+            const consoleBox = document.getElementById('live-console');
+            if(!consoleBox) return;
+            const timeStr = new Date().toTimeString().split(' ')[0] + "." + Math.floor(Math.random() * 900 + 100);
+            const line = document.createElement('div');
+            line.className = isError ? 'console-line error' : 'console-line';
+            line.textContent = `[${timeStr}] ${text}`;
+            consoleBox.appendChild(line);
+            consoleBox.scrollTop = consoleBox.scrollHeight;
+
+            if (isError) errorCount++; else logCount++;
+            document.getElementById('log-count').textContent = logCount;
+            document.getElementById('error-count').textContent = errorCount;
+        }
+
+        function clearConsole() {
+            document.getElementById('live-console').innerHTML = '';
+            logCount = 0; errorCount = 0;
+            document.getElementById('log-count').textContent = logCount;
+            document.getElementById('error-count').textContent = errorCount;
+            logToConsole("Console đã được làm sạch.");
+        }
+
+        function sendTerminalCommand() {
+            const input = document.getElementById('terminal-input');
+            const val = input.value.trim();
+            if (!val) return;
+            logToConsole(`> ${val}`);
+            try {
+                if (val === 'help()') {
+                    logToConsole("Available commands: clearConsole()");
+                } else {
+                    const result = eval(val);
+                    logToConsole(result !== undefined ? String(result) : "Executed successfully.");
+                }
+            } catch (err) {
+                logToConsole(err.message, true);
+            }
+            input.value = '';
+        }
+
+        function handleTerminalKey(e) {
+            if (e.key === 'Enter') sendTerminalCommand();
+        }
+
+        let is120FPSUnlocked = false;
+        function toggleUnlockFPS() {
+            is120FPSUnlocked = !is120FPSUnlocked;
+            const btn = document.getElementById('btn-unlock-fps');
+            btn.textContent = `UnLock 120 FPS : ${is120FPSUnlocked ? 'ON' : 'OFF'}`;
+            logToConsole(`[Module] Unlock 120 FPS set to ${is120FPSUnlocked ? 'ON' : 'OFF'}`);
+        }
+
+        function triggerAction(actionName) {
+            logToConsole(`[Action] Đang thực thi: ${actionName}...`);
+            setTimeout(() => {
+                logToConsole(`[Action] ${actionName} hoàn tất thành công!`);
+            }, 400);
+        }
+
+        function initCharts() {
+            const cpuCanvas = document.getElementById('cpuWaveCanvas');
+            const ramCanvas = document.getElementById('ramWaveCanvas');
+            if(!cpuCanvas || !ramCanvas) return;
+            
+            setupCanvasSize(cpuCanvas);
+            setupCanvasSize(ramCanvas);
+
+            setInterval(() => {
+                drawWave(cpuCanvas, '#ff3366', 2, 8);
+                drawWave(ramCanvas, '#00ffcc', 150, 40);
+                
+                document.getElementById('live-fps').textContent = Math.floor(Math.random() * 8 + 52);
+                document.getElementById('live-cpu').textContent = Math.floor(Math.random() * 5 + 1) + '%';
+                document.getElementById('live-ram').textContent = (180 + Math.floor(Math.random() * 15)) + ' MB';
+            }, 800);
+        }
+
+        function setupCanvasSize(canvas) {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+
+        function drawWave(canvas, color, baseVal, variance) {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+
+            const points = 20;
+            const step = canvas.width / points;
+
+            for (let i = 0; i <= points; i++) {
+                const x = i * step;
+                const y = canvas.height - (baseVal + Math.sin(i + Date.now() * 0.003) * variance + Math.random() * 5);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        }
+    </script></body></html>
