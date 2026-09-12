@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CUTEO X AURA - CARBON VIP ENGINE</title>
+    
+    <style>
+        :root {
+            --bg-dark: #080808;
+            --accent-cyan: #00e5ff;
+            --text-main: #f1f5f9;
+            --text-sub: #94a3b8;
+            --border-carbon: rgba(255, 255, 255, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(black 15%, transparent 16%),
+                radial-gradient(black 15%, transparent 16%),
+                radial-gradient(rgba(255, 255, 255, .08) 15%, transparent 20%),
+                radial-gradient(rgba(255, 255, 255, .08) 15%, transparent 20%);
+            background-size: 16px 16px;
+            background-position: 0 0, 8px 8px, 0 1px, 8px 9px;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .app-container {
+            width: 90%;
+            max-width: 380px;
+            background: rgba(18, 20, 24, 0.95);
+            border: 1px solid var(--border-carbon);
+            border-radius: 20px;
+            padding: 24px 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+            transform: translateZ(0);
+            will-change: transform;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header svg {
+            width: 38px;
+            height: 38px;
+            fill: var(--accent-cyan);
+            margin-bottom: 6px;
+        }
+        .header h2 {
+            font-weight: 800;
+            font-size: 16px;
+            color: #fff;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .header p {
+            font-size: 11px;
+            color: var(--text-sub);
+            margin-top: 4px;
+        }
+
+        .screen {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+            will-change: opacity;
+        }
+        .screen.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 14px;
+        }
+        .input-group svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            fill: var(--text-sub);
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 14px 12px 40px;
+            background: #0a0b0d;
+            border: 1px solid var(--border-carbon);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+        }
+        .input-group input:focus {
+            border-color: var(--accent-cyan);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .btn-action {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-carbon);
+            border-radius: 12px;
+            background: linear-gradient(180deg, #242830 0%, #14161a 100%);
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-action:active {
+            opacity: 0.85;
+            transform: scale(0.98);
+        }
+
+        .btn-cyan {
+            background: linear-gradient(180deg, #00b4d8 0%, #0077b6 100%);
+            border-color: #00e5ff;
+            color: #fff;
+        }
+
+        .btn-zalo {
+            background: linear-gradient(180deg, #0068ff 0%, #0040a8 100%);
+            border-color: #3a8dff;
+            color: #fff;
+        }
+
+        #status-msg {
+            font-size: 11px;
+            text-align: center;
+            margin-top: 12px;
+            min-height: 16px;
+            font-weight: 700;
+        }
+
+        .feature-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .feature-card {
+            background: #0d0f12;
+            border: 1px solid var(--border-carbon);
+            border-radius: 12px;
+            padding: 12px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .feature-info h4 {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .feature-info p {
+            font-size: 10px;
+            color: var(--text-sub);
+            margin-top: 2px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #22262c;
+            transition: background-color 0.2s;
+            border-radius: 20px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #64748b;
+            transition: transform 0.2s;
+            border-radius: 50%;
+            will-change: transform;
+        }
+        input:checked + .slider { background-color: #00e5ff; }
+        input:checked + .slider:before { transform: translateX(18px); background-color: #000; }
+
+        #crosshair {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            border: 2px solid var(--accent-cyan);
+            border-radius: 50%;
+            transform: translate3d(-50%, -50%, 0);
+            pointer-events: none;
+            z-index: 9999;
+            will-change: transform;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="crosshair"></div>
+
+    <div class="app-container">
+        <!-- MÀN HÌNH ĐĂNG NHẬP KEY -->
+        <div id="key-screen" class="screen active">
+            <div class="header">
+                <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-5.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8subscriptionZ"/></svg>
+                <h2>CUTEO X AURA VIP</h2>
+                <p>Hệ thống tự động gia hạn thời gian</p>
+            </div>
+
+            <div class="input-group">
+                <svg viewBox="0 0 24 24"><path d="M7 14c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm5.6-4c-.8-2.3-3-4-5.6-4-3.3 0-6 2.7-6 6s2.7 6 6 6c2.6 0 4.8-1.7 5.6-4H16v4h4v-4h2v-4H12.6z"/></svg>
+                <input type="text" id="keyInput" placeholder="Nhập Key kích hoạt VIP..." autocomplete="off">
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-action btn-cyan" onclick="verifyKey()">XÁC NHẬN KEY</button>
+                <button class="btn-action btn-zalo" onclick="contactZalo()">MUA KEY QUA ZALO</button>
+            </div>
+
+            <div id="status-msg"></div>
+        </div>
+
+        <!-- MÀN HÌNH DASHBOARD SYSTEM -->
+        <div id="app-screen" class="screen">
+            <div class="header">
+                <svg viewBox="0 0 24 24"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg>
+                <h2>PANEL ĐIỀU KHIỂN</h2>
+                <p id="key-expire-info" style="color: #00e5ff; font-weight: bold;"></p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-info">
+                        <h4>Tâm Ngắm Ảo Pro</h4>
+                        <p>Hiển thị tâm hỗ trợ ngắm bắn</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="crosshairToggle" onchange="toggleCrosshair(this)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-info">
+                        <h4>Tối Ưu Nhạy Touch</h4>
+                        <p>Phản hồi cảm ứng 120Hz</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <button class="btn-action btn-zalo" onclick="contactZalo()">HỖ TRỢ ZALO ADMIN</button>
+        </div>
+    </div>
+
+    <script>
+        const KEY_DATABASE = {
+            "AURA-1D-89F2A": 24, "AURA-1D-31C0B": 24, "AURA-1D-77E4C": 24, "AURA-1D-92A1D": 24, "AURA-1D-45F9E": 24,
+            "AURA-1D-63B8F": 24, "AURA-1D-18D2G": 24, "AURA-1D-50C7H": 24, "AURA-1D-84E3I": 24, "AURA-1D-29A6J": 24,
+            "AURA-1D-71F5K": 24, "AURA-1D-36B9L": 24, "AURA-1D-94C2M": 24, "AURA-1D-52E8N": 24, "AURA-1D-17A4O": 24,
+            "AURA-1D-83F1P": 24, "AURA-1D-49B6Q": 24, "AURA-1D-25C3R": 24, "AURA-1D-68E9S": 24, "AURA-1D-90A7T": 24,
+            "AURA-7D-91K4A": 168, "AURA-7D-28M0B": 168, "AURA-7D-64P7C": 168, "AURA-7D-15R2D": 168, "AURA-7D-83T9E": 168,
+            "AURA-7D-37V5F": 168, "AURA-7D-50X1G": 168, "AURA-7D-79Z8H": 168, "AURA-7D-42B3I": 168, "AURA-7D-86D6J": 168,
+            "AURA-7D-19F0K": 168, "AURA-7D-53H7L": 168, "AURA-7D-90J4M": 168, "AURA-7D-34L1N": 168, "AURA-7D-71N8O": 168,
+            "AURA-7D-25P5P": 168, "AURA-7D-68R2Q": 168, "AURA-7D-40T9R": 168, "AURA-7D-87V6S": 168, "AURA-7D-13X3T": 168,
+            "AURA-30D-47A9A": 720, "AURA-30D-82C3B": 720, "AURA-30D-19E6C": 720, "AURA-30D-53G1D": 720, "AURA-30D-90I8E": 720,
+            "AURA-30D-26K5F": 720, "AURA-30D-64M2G": 720, "AURA-30D-31O9H": 720, "AURA-30D-78Q6I": 720, "AURA-30D-15S3J": 720,
+            "AURA-30D-89U0K": 720, "AURA-30D-42W7L": 720, "AURA-30D-60Y4M": 720, "AURA-30D-97B1N": 720, "AURA-30D-23D8O": 720,
+            "AURA-30D-58F5P": 720, "AURA-30D-14H2Q": 720, "AURA-30D-71J9R": 720, "AURA-30D-36L6S": 720, "AURA-30D-80N3T": 720,
+            "AURA-VIP-99F2A": 999999, "AURA-VIP-88C0B": 999999, "AURA-VIP-77E4C": 999999, "AURA-VIP-66A1D": 999999, "AURA-VIP-55F9E": 999999,
+            "AURA-VIP-44B8F": 999999, "AURA-VIP-33D2G": 999999, "AURA-VIP-22C7H": 999999, "AURA-VIP-11E3I": 999999, "AURA-VIP-90A6J": 999999,
+            "AURA-VIP-81F5K": 999999, "AURA-VIP-72B9L": 999999, "AURA-VIP-63C2M": 999999, "AURA-VIP-54E8N": 999999, "AURA-VIP-45A4O": 999999,
+            "AURA-VIP-36F1P": 999999, "AURA-VIP-27B6Q": 999999, "AURA-VIP-18C3R": 999999, "AURA-VIP-95E9S": 999999, "AURA-VIP-84A7T": 999999
+        };
+
+        window.addEventListener('DOMContentLoaded', checkExistingSession);
+
+        function verifyKey() {
+            const inputEl = document.getElementById("keyInput");
+            const msgEl = document.getElementById("status-msg");
+            const userKey = inputEl.value.trim().toUpperCase();
+
+            if (!userKey) {
+                msgEl.style.color = "#ff4d4d";
+                msgEl.innerText = "⚠️ Vui lòng nhập Key kích hoạt!";
+                return;
+            }
+
+            if (Object.prototype.hasOwnProperty.call(KEY_DATABASE, userKey)) {
+                const hoursValid = KEY_DATABASE[userKey];
+                const expireTime = Date.now() + (hoursValid * 60 * 60 * 1000);
+
+                localStorage.setItem("vip_session_key", userKey);
+                localStorage.setItem("vip_session_expire", expireTime);
+
+                msgEl.style.color = "#00e5ff";
+                msgEl.innerText = "✓ Kích hoạt thành công!";
+                
+                requestAnimationFrame(() => {
+                    setTimeout(() => openDashboard(expireTime), 200);
+                });
+            } else {
+                msgEl.style.color = "#ff4d4d";
+                msgEl.innerText = "❌ Key không đúng hoặc đã hết hạn!";
+            }
+        }
+
+        function checkExistingSession() {
+            const savedExpire = localStorage.getItem("vip_session_expire");
+            if (savedExpire) {
+                const now = Date.now();
+                if (now < parseInt(savedExpire, 10)) {
+                    openDashboard(parseInt(savedExpire, 10));
+                } else {
+                    localStorage.removeItem("vip_session_key");
+                    localStorage.removeItem("vip_session_expire");
+                    const msgEl = document.getElementById("status-msg");
+                    msgEl.style.color = "#ff4d4d";
+                    msgEl.innerText = "⚠️ Key của bạn đã hết thời hạn!";
+                }
+            }
+        }
+
+        function openDashboard(expireTimeStamp) {
+            const keyScreen = document.getElementById("key-screen");
+            const appScreen = document.getElementById("app-screen");
+
+            keyScreen.classList.remove("active");
+            setTimeout(() => {
+                appScreen.classList.add("active");
+            }, 100);
+
+            const remainingMs = expireTimeStamp - Date.now();
+            const remainingHours = Math.round(remainingMs / (1000 * 60 * 60));
+            
+            const infoEl = document.getElementById("key-expire-info");
+            if (remainingHours > 10000) {
+                infoEl.innerText = "Thời hạn: VĨNH VIỄN";
+            } else {
+                infoEl.innerText = `Thời hạn còn lại: ~${remainingHours} Giờ`;
+            }
+        }
+
+        function contactZalo() {
+            window.open("https://zalo.me", "_blank");
+        }
+
+        function toggleCrosshair(checkbox) {
+            document.getElementById("crosshair").style.display = checkbox.checked ? "block" : "none";
+        }
+    </script>
+</body>
+</html>
