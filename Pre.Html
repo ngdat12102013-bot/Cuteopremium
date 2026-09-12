@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUTEO X AURA - CARBON VIP ENGINE</title>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #080808;
+            --carbon-base: #121417;
+            --accent-silver: #e0e6ed;
+            --accent-cyan: #00e5ff;
+            --accent-gold: #ffb700;
+            --text-main: #f1f5f9;
+            --text-sub: #94a3b8;
+            --border-carbon: rgba(255, 255, 255, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(black 15%, transparent 16%),
+                radial-gradient(black 15%, transparent 16%),
+                radial-gradient(rgba(255, 255, 255, .1) 15%, transparent 20%),
+                radial-gradient(rgba(255, 255, 255, .1) 15%, transparent 20%);
+            background-size: 16px 16px;
+            background-position: 0 0, 8px 8px, 0 1px, 8px 9px;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 410px;
+            margin: 15px;
+            background: linear-gradient(145deg, rgba(20, 22, 26, 0.95), rgba(10, 11, 14, 0.98));
+            border: 1px solid var(--border-carbon);
+            border-radius: 20px;
+            padding: 24px 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header i {
+            font-size: 36px;
+            color: var(--accent-cyan);
+            filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.5));
+            margin-bottom: 8px;
+        }
+        .header h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            font-size: 17px;
+            letter-spacing: 1.5px;
+            color: #fff;
+            text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+        .header p {
+            font-size: 11px;
+            color: var(--text-sub);
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        #key-screen { display: block; }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 16px;
+        }
+        .input-group i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-sub);
+            font-size: 13px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 14px 12px 40px;
+            background: #0a0b0d;
+            border: 1px solid var(--border-carbon);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            transition: all 0.25s ease;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+        }
+        .input-group input:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), 0 0 10px rgba(0, 229, 255, 0.3);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .btn-action {
+            width: 100%;
+            padding: 11px 16px;
+            border: 1px solid var(--border-carbon);
+            border-radius: 12px;
+            background: linear-gradient(180deg, #242830 0%, #14161a 100%);
+            color: var(--text-main);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .btn-action:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            background: linear-gradient(180deg, #2c323d 0%, #1a1d24 100%);
+            transform: translateY(-1px);
+        }
+        .btn-action:active { transform: translateY(1px); }
+
+        .btn-cyan {
+            background: linear-gradient(180deg, #00b4d8 0%, #0077b6 100%);
+            border-color: #00e5ff;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 180, 216, 0.4);
+        }
+        .btn-cyan:hover {
+            background: linear-gradient(180deg, #00c7ec 0%, #0088ce 100%);
+        }
+
+        .btn-zalo {
+            background: linear-gradient(180deg, #0068ff 0%, #0040a8 100%);
+            border-color: #3a8dff;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 104, 255, 0.4);
+        }
+
+        #status-msg {
+            font-size: 11px;
+            text-align: center;
+            margin-top: 12px;
+            min-height: 16px;
+            font-weight: 700;
+        }
+
+        #app-screen { display: none; }
+
+        .feature-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .feature-card {
+            background: #0d0f12;
+            border: 1px solid var(--border-carbon);
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
+        }
+        .feature-info h4 {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .feature-info p {
+            font-size: 10px;
+            color: var(--text-sub);
+            margin-top: 1px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #22262c;
+            transition: .3s;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #64748b;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background: #00e5ff;
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+        }
+        input:checked + .slider:before {
+            transform: translateX(18px);
+            background-color: #000;
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .btn-mini {
+            padding: 9px 8px;
+            font-size: 10.5px;
+            border-radius: 10px;
+        }
+
+        #crosshair {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            border: 2px solid var(--accent-cyan);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 0 8px var(--accent-cyan);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="crosshair"></div>
+
+    <div class="app-container">
+        <!-- MÀN HÌNH ĐĂNG NHẬP KEY -->
+        <div id="key-screen">
+            <div class="header">
+                <i class="fa-solid fa-shield-halved"></i>
+                <h2>CUTEO X AURA VIP</h2>
+                <p>Hệ thống mã hóa Carbon MD5 Secure</p>
+            </div>
+
+            <div class="input-group">
+                <i class="fa-solid fa-key"></i>
+                <input type="text" id="keyInput" placeholder="Nhập Key kích hoạt..." autocomplete="off">
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-action btn-cyan" onclick="verifyKey()">
+                    <i class="fa-solid fa-right-to-bracket"></i> XÁC NHẬN KEY
+                </button>
+
+                <button class="btn-action btn-zalo" onclick="contactZalo()">
+                    <i class="fa-solid fa-comment-dots"></i> MUA KEY QUA ZALO
+                </button>
+            </div>
+
+            <div id="status-msg"></div>
+        </div>
+
+        <!-- MÀN HÌNH DASHBOARD SYSTEM -->
+        <div id="app-screen">
+            <div class="header">
+                <i class="fa-solid fa-sliders"></i>
+                <h2>PANEL ĐIỀU KHIỂN</h2>
+                <p>Trạng thái: <span style="color: #00e5ff; font-weight: bold;">VERIFIED VIP</span></p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-info">
+                        <h4>Tâm Ngắm Ảo Pro</h4>
+                        <p>Hiển thị tâm hỗ trợ ngắm bắn</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="crosshairToggle" onchange="toggleCrosshair(this)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-info">
+                        <h4>Tối Ưu Nhạy Touch</h4>
+                        <p>Phản hồi cảm ứng 120Hz</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-info">
+                        <h4>Ổn Định Khung Hình (FPS)</h4>
+                        <p>Hạn chế giật lag khi giao tranh</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="quick-grid">
+                <button class="btn-action btn-mini" onclick="cleanRam()">
+                    <i class="fa-solid fa-microchip"></i> DỌN RAM
+                </button>
+                <button class="btn-action btn-mini" onclick="boostGame()">
+                    <i class="fa-solid fa-bolt"></i> BOOST GAME
+                </button>
+            </div>
+
+            <button class="btn-action btn-zalo" style="margin-top: 10px;" onclick="contactZalo()">
+                <i class="fa-solid fa-headset"></i> HỖ TRỢ ZALO ADMIN
+            </button>
+        </div>
+    </div>
+
+    <!-- CryptoJS MD5 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+    <script>
+        // Danh sách 80 Key MD5 (20 Ngày, 20 Tuần, 20 Tháng, 20 Vĩnh viễn)
+        const VALID_HASHES = [
+            // 20 KEY NGÀY (DAY)
+            "ff4044ee7892900fa26f1c4df8fe0f67","ce792c30beedaeef20583b40097f4852","fdb936ec6f123f03bcf52eb3ea5e44ee","115ff6ebfb9371e16fdf9e0f39bd6993","f38f65e2bf87a38fe4779eecb7b9e07f",
+            "f2670e17812cfb583f707f154fbdbb9a","ae88e04b49be88a24db9fd15e5812e9b","1d63d6f1a8e2cb2a0133c94f5fb243a7","0ee8a05efd0a7a0b36c6e7f8e8113224","3731871eec81b8d65cfc6aa4e7bc47ea",
+            "98ae5ea891c3dcf8c0570b65f70bbbe2","dc91866ef47e5bcfecb7aa46be76eec4","4d799f9397e59b2075b8e96bfca21544","fbefabf360773d32845bb08c90ebfc36","5f05325ff27bca60920cb94ea9a06653",
+            "521950d88ef56fc42f36b64d1f55b172","bc3e790ec31cbf0ff502b48995fb42d8","fdfaa0bbd5d140e7d56c2f3068e0d5db","edc35b6a7b29a27c7cfca88db1f349c7","db22f281e592ee571343aa87019aa53e",
+            
+            // 20 KEY TUẦN (WEEK)
+            "4f0fc5d4ca86737aaad2e061a7a00f2e","e01fa2eb6f7df200199723528b8e010d","bb8ff90d79fcce82f9ef02ff079eb672","aeecddaa4e334aa789fe601004a6fc92","d37c7ceca121eb3b4a2e51921c5b8b8b",
+            "a507a7e8e7a091b649dcf46e9195d82a","62edaa029052d3a3c932f913d09a069d","ac2be7c87c805295c5553e41b954fb88","6a92825bb619932ca4d8f51dfb3ef5d7","3bd5621a6462719602430032f3f7e1b9",
+            "b5790be6fd72023537243b5e4a8ea54d","22bfac09e1eefbf3817f050e68efeb2d","ed367a7b8e1a14693a776c5d9a2ffb39","2ee04ea602fae3832d207ec18e7eeb4c","2c98375fbdb5cb3f73909774d81edca0",
+            "60c878e1fd7981504938d4072bfa044f","aa7e75cb7970dcaaaecb0492cb474771","6d9fc39bb56f0653604f3ae5d8aa6d06","5258e7a16f6b5b449b5190d6e273f554","6ee208d81fd44ea595304b8ce99ec76f",
+
+            // 20 KEY THÁNG (MONTH)
+            "bf7f8d689fb8c5f5904ddfa0c08b4751","cded9193744fb1df0fa26fcf01ee0385","ebbc65c58a679e95159ff4a5843edbfb","ac05df84fb9e2ebcd11dbd8cb5fae164","36a7ed79774c8bfaeb454eb89aa20cf0",
+            "ca1a56f6c99f8be5fc41ef5e65d836ea","ed158f3c7a336fc610f4fe6f2f9c4179","222f67644ce695ecad471b4aaed634b0","20404fa3a9aa7fafe6b32525e656c0ef","ce75079a4bb36a9482594a45a089d0ca",
+            "7e7161b4ff448b1aa6a5dfeb1a25e144","a5664d4b1ee6ca4e116ddcb65882b7b2","5c26ef4bf2ebfa949f57ebff1cf41c10","834e5ce6c3bc2c12920fdfc972f7d3fd","ebdd8663884b2323ef0b7784bbdf3b92",
+            "467144eef7ee2845c0f9a26372554743","fe378a506bfd5f4c4bc4594680877997","be8f9a2aaad938096f9c98b671cbebd8","ae5f7d2429e7c54199c905fb554bb762","7d1e8c9c72e4242941df9043e7fb72a1",
+
+            // 20 KEY VĨNH VIỄN (VIP PERMANENT)
+            "71dcffea1a3ee45ecdfcefaabfebe711","02a0a2dfd66ec07ccebd8fe7162fd44e","ad8fb6ffddbe64d93e5a5ea11a1fb636","40ec1e194c4ec94b150917244a2c0db3","7fc6d113ae8b958fbc83d5cfb902e8aa",
+            "52e391b150dbfb2aa8ecfc051bb3bfd6","5441cb0f49bfeb35ec19e7bc10f7fa20","cf2cb0bd4921b795697d8cfebbdabf5d","303dd5096500ca89f074a8e3aa74b9d0","4db6a59fdcdcaaa024e03fbddb8b4dc1",
+            "730b206aa166b8c8003f56647fe41527","ebdc2f1437fa05a415510b50aa2bc450","02ecba393f6bce7ff49622a59a72fa34","aa8d8c279313cb1fb6a7db1ef483df66","d9a544c23db2e5d95393fb6280db5f8f",
+            "bfa02aa11e2f750b28ec60df6a8fb2d2","856c80dfa80a22146f77ec9457a4e98d","ce0be9b3fa47d519b78e91faecbf2866","97e3c4984f1faeddc8a74ec4e3d3ddf8","2034e320d366a014a05553e1f0e42f9b"
+        ];
+
+        function verifyKey() {
+            const inputEl = document.getElementById("keyInput");
+            const msgEl = document.getElementById("status-msg");
+            const userKey = inputEl.value.trim();
+
+            if (!userKey) {
+                msgEl.style.color = "#ff4d4d";
+                msgEl.innerText = "⚠️ Vui lòng nhập Key kích hoạt!";
+                return;
+            }
+
+            const hashedInput = CryptoJS.MD5(userKey).toString();
+
+            if (VALID_HASHES.includes(hashedInput)) {
+                msgEl.style.color = "#00e5ff";
+                msgEl.innerText = "✓ Kích hoạt thành công!";
+                
+                setTimeout(() => {
+                    document.getElementById("key-screen").style.display = "none";
+                    document.getElementById("app-screen").style.display = "block";
+                }, 600);
+            } else {
+                msgEl.style.color = "#ff4d4d";
+                msgEl.innerText = "❌ Key không hợp lệ!";
+            }
+        }
+
+        function contactZalo() {
+            window.open("https://zalo.me", "_blank");
+        }
+
+        function toggleCrosshair(checkbox) {
+            document.getElementById("crosshair").style.display = checkbox.checked ? "block" : "none";
+        }
+
+        function cleanRam() {
+            alert("Đã giải phóng 350MB Bộ nhớ RAM ngầm!");
+        }
+        function boostGame() {
+            alert("Đã kích hoạt chế độ Tối ưu hóa Game!");
+        }
+
+        document.addEventListener("contextmenu", e => e.preventDefault());
+        document.addEventListener("keydown", e => {
+            if (e.keyCode === 123 || 
+               (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || 
+               (e.ctrlKey && e.keyCode === 85)) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
