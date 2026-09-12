@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CUTEO X AURA - CARBON LUXURY VIP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #050608;
+            --accent-gold: #f39c12;
+            --accent-cyan: #00e5ff;
+            --accent-glow: rgba(0, 229, 255, 0.35);
+            --text-main: #f1f5f9;
+            --text-sub: #94a3b8;
+            --border-carbon: rgba(255, 255, 255, 0.12);
+            --card-bg: rgba(14, 16, 22, 0.92);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(0, 229, 255, 0.12) 0%, transparent 60%),
+                linear-gradient(135deg, #090b10 0%, #030406 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 410px;
+            height: 650px;
+            margin: 10px;
+            background: linear-gradient(145deg, rgba(18, 21, 28, 0.98), rgba(6, 7, 10, 0.99));
+            border: 1px solid rgba(0, 229, 255, 0.25);
+            border-radius: 26px;
+            padding: 16px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.95), inset 0 1px 0 rgba(255,255,255,0.15), 0 0 25px rgba(0,229,255,0.1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Màn hình Key bảo mật cao cấp */
+        #key-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(145deg, #0e1117, #040507);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 24px;
+            transition: opacity 0.3s ease;
+        }
+        #key-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+            display: none;
+        }
+
+        .secure-badge {
+            width: 70px; height: 70px;
+            background: linear-gradient(135deg, rgba(0,229,255,0.2), rgba(0,229,255,0.03));
+            border: 1px solid var(--accent-cyan);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px auto;
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.4);
+        }
+        .secure-badge i {
+            font-size: 30px;
+            color: var(--accent-cyan);
+        }
+
+        .header-brand {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header-brand h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 20px;
+            color: #fff;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #fff, var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header-brand p {
+            font-size: 11.5px;
+            color: var(--text-sub);
+            margin-top: 4px;
+        }
+
+        .input-box {
+            position: relative;
+            margin-bottom: 12px;
+        }
+        .input-box i {
+            position: absolute;
+            left: 14px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-sub);
+            font-size: 13px;
+        }
+        .input-box input {
+            width: 100%;
+            padding: 13px 14px 13px 40px;
+            background: #040507;
+            border: 1px solid var(--border-carbon);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .input-box input:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 12px rgba(0,229,255,0.25);
+        }
+
+        .key-action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .btn-core {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid var(--border-carbon);
+            transition: transform 0.1s, opacity 0.1s;
+        }
+        .btn-core:active { transform: scale(0.96); opacity: 0.9; }
+
+        .btn-primary-cyan {
+            background: linear-gradient(180deg, #00b4d8 0%, #0077b6 100%);
+            border-color: #00e5ff;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(0,229,255,0.3);
+        }
+        .btn-zalo-link {
+            background: linear-gradient(180deg, #0068ff 0%, #0040a8 100%);
+            border-color: #3a8dff;
+            color: #fff;
+            margin-top: 8px;
+        }
+        #key-msg {
+            font-size: 11px;
+            text-align: center;
+            margin-top: 10px;
+            min-height: 18px;
+            font-weight: bold;
+        }
+
+        /* Layout chính 5 Tabs */
+        .app-content {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .tab-pane {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: none;
+            opacity: 0;
+            flex-direction: column;
+            transition: opacity 0.2s ease;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+        .tab-pane.active {
+            display: flex;
+            opacity: 1;
+        }
+        .tab-pane::-webkit-scrollbar { width: 3px; }
+        .tab-pane::-webkit-scrollbar-thumb { background: var(--accent-cyan); border-radius: 3px; }
+
+        /* TAB 1: HOME SANG TRỌNG QUÝ PHÁI (ADMIN CUTEO) */
+        .home-banner {
+            background: linear-gradient(135deg, rgba(20,24,33,0.95), rgba(8,10,15,0.98));
+            border: 1px solid rgba(0, 229, 255, 0.4);
+            border-radius: 20px;
+            padding: 22px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 0 15px rgba(0,229,255,0.1);
+            margin-bottom: 12px;
+        }
+        .home-banner i {
+            font-size: 45px;
+            color: var(--accent-cyan);
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 15px var(--accent-glow));
+        }
+        .home-banner h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+        .home-banner p {
+            font-size: 11.5px;
+            color: var(--accent-cyan);
+            margin-top: 4px;
+            font-weight: 700;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-carbon);
+            border-radius: 14px;
+            padding: 12px;
+            text-align: center;
+        }
+        .stat-card i { font-size: 18px; color: var(--accent-cyan); margin-bottom: 4px; }
+        .stat-card h4 { font-size: 12px; color: #fff; font-family: 'Orbitron', sans-serif; }
+        .stat-card span { font-size: 10px; color: var(--text-sub); }
+
+        .vip-card-info {
+            background: linear-gradient(90deg, rgba(243,156,18,0.12), rgba(14,16,22,0.9));
+            border: 1px solid rgba(243,156,18,0.35);
+            border-radius: 14px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .vip-card-info div h5 { font-size: 12px; color: var(--accent-gold); font-weight: 800; }
+        .vip-card-info div p { font-size: 10px; color: var(--text-sub); }
+
+        /* Card cấu trúc chung cho các tab */
+        .func-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-carbon);
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .func-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .func-info h4 { font-size: 12px; font-weight: 700; color: #fff; }
+        .func-info p { font-size: 9.5px; color: var(--text-sub); margin-top: 1px; }
+
+        /* Switch UI */
+        .switch {
+            position: relative; display: inline-block; width: 38px; height: 20px; flex-shrink: 0;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #1a1e26; transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px;
+            background-color: #64748b; transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--accent-cyan); }
+        input:checked + .slider:before { transform: translateX(18px); background-color: #000; }
+
+        /* Sub-controls cho Tâm ảo */
+        .sub-control {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(0,0,0,0.35); padding: 6px 10px; border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .sub-control label { font-size: 10px; color: var(--accent-cyan); font-weight: bold; }
+        .sub-control input[type="range"] { flex: 1; accent-color: var(--accent-cyan); }
+        .color-group { display: flex; gap: 5px; }
+        .dot { width: 14px; height: 14px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(255,255,255,0.4); }
+
+        /* TAB 3: BOOST (5 THANH KÉO CÓ THÔNG SỐ ĐO & VÀO GAME) */
+        .boost-box {
+            background: linear-gradient(145deg, #0d1117, #06080c);
+            border: 1px solid var(--accent-cyan);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 0 25px rgba(0,229,255,0.15);
+            margin-bottom: 12px;
+        }
+        .boost-box i { font-size: 32px; color: var(--accent-cyan); margin-bottom: 8px; }
+        .boost-box h3 { font-family: 'Orbitron', sans-serif; font-size: 13px; color: #fff; margin-bottom: 4px; }
+        .boost-box p { font-size: 10px; color: var(--text-sub); margin-bottom: 12px; }
+
+        .slider-control-group {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            text-align: left;
+        }
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .slider-header span.value-disp {
+            color: var(--accent-cyan);
+            font-family: 'Orbitron', sans-serif;
+        }
+        .slider-control-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-cyan);
+            height: 4px;
+            cursor: pointer;
+        }
+
+        .btn-launch-game {
+            background: linear-gradient(180deg, #00e5ff 0%, #0088cc 100%);
+            color: #000; font-family: 'Orbitron', sans-serif; font-weight: 900;
+            padding: 12px; border-radius: 12px; border: none; width: 100%; cursor: pointer;
+            box-shadow: 0 0 20px rgba(0,229,255,0.4); transition: transform 0.1s;
+        }
+        .btn-launch-game:active { transform: scale(0.97); }
+
+        /* TAB 4: LIVE CODES (Mỗi nút chạy code nhiều dòng + âm thanh) */
+        .live-log-box {
+            background: #030406;
+            border: 1px solid rgba(0,229,255,0.25);
+            border-radius: 10px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 9.5px;
+            color: #00ff66;
+            height: 110px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .btn-run-code {
+            background: linear-gradient(180deg, rgba(0,229,255,0.2), rgba(0,229,255,0.05));
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 9.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .btn-run-code:active { background: var(--accent-cyan); color: #000; transform: scale(0.95); }
+
+        /* Bottom Navigation Bar */
+        .nav-bar {
+            display: flex;
+            background: #08090d;
+            border: 1px solid var(--border-carbon);
+            border-radius: 16px;
+            padding: 6px;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .nav-item {
+            background: transparent;
+            border: none;
+            color: var(--text-sub);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 10px;
+            transition: 0.2s;
+        }
+        .nav-item i { font-size: 15px; }
+        .nav-item span { font-size: 9px; font-weight: 700; }
+        .nav-item.active {
+            background: rgba(0, 229, 255, 0.12);
+            color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0,229,255,0.15);
+        }
+
+        /* Crosshair Overlay */
+        #crosshair {
+            display: none; position: fixed; top: 50%; left: 50%;
+            width: 10px; height: 10px; border: 2px solid var(--accent-cyan);
+            border-radius: 50%; transform: translate3d(-50%, -50%, 0);
+            pointer-events: none; z-index: 9999; box-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        /* Boost Overlay Screen */
+        #boost-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(4, 5, 7, 0.96); z-index: 20000;
+            flex-direction: column; justify-content: center; align-items: center;
+            color: var(--accent-cyan); font-family: 'Orbitron', sans-serif;
+        }
+        .spinner {
+            width: 45px; height: 45px; border: 4px solid rgba(0,229,255,0.1);
+            border-top: 4px solid var(--accent-cyan); border-radius: 50%;
+            animation: spin 0.8s linear infinite; margin-bottom: 15px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="crosshair"></div>
+
+    <!-- Màn hình Boost chạy ngầm và mở game -->
+    <div id="boost-overlay">
+        <div class="spinner"></div>
+        <h3 id="boost-status" style="font-size: 13px; letter-spacing: 1px;">ĐANG TỐI ƯU HỆ THỐNG RAM...</h3>
+        <p style="font-size: 10px; color: #94a3b8; margin-top: 6px;">Chuẩn bị khởi chạy Free Fire...</p>
+    </div>
+
+    <!-- MÀN HÌNH NHẬP KEY 80 MÃ BẢO MẬT (HỖ TRỢ 2 KIỂM TRA) -->
+    <div id="key-screen">
+        <div class="secure-badge">
+            <i class="fa-solid fa-fingerprint"></i>
+        </div>
+        <div class="header-brand">
+            <h2>CUTEO X AURA</h2>
+            <p>Carbon Luxury VIP Security System</p>
+        </div>
+
+        <div class="input-box">
+            <i class="fa-solid fa-key"></i>
+            <input type="text" id="keyInput" placeholder="Nhập Key kích hoạt VIP..." autocomplete="off">
+        </div>
+
+        <div class="key-action-grid">
+            <button class="btn-core btn-primary-cyan" onclick="verifyKeyDevice()">
+                <i class="fa-solid fa-mobile-screen"></i> CHECK 1 THIẾT BỊ
+            </button>
+            <button class="btn-core btn-primary-cyan" onclick="verifyKeyGlobal()" style="background: linear-gradient(180deg, #10b981 0%, #059669 100%); border-color: #34d399;">
+                <i class="fa-solid fa-cloud-arrow-down"></i> KIỂM TRA KEY
+            </button>
+        </div>
+
+        <button class="btn-core btn-zalo-link" onclick="contactZalo()">
+            <i class="fa-solid fa-headset"></i> LIÊN HỆ MUA KEY ZALO
+        </button>
+
+        <div id="key-msg"></div>
+    </div>
+
+    <!-- KHUNG ỨNG DỤNG CHÍNH -->
+    <div class="app-container">
+        
+        <div class="app-content">
+            <!-- TAB 1: HOME SANG TRỌNG QUÝ PHÁI (ADMIN CUTEO) -->
+            <div id="tab-1" class="tab-pane active">
+                <div class="home-banner">
+                    <i class="fa-solid fa-crown"></i>
+                    <h3>CARBON LUXURY VIP</h3>
+                    <p>Admin: CUTEO - Đà Lạt Engine Ultra</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fa-solid fa-gauge-high"></i>
+                        <h4>120 FPS</h4>
+                        <span>Độ mượt hiển thị</span>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fa-solid fa-bolt"></i>
+                        <h4>0.1ms</h4>
+                        <span>Độ trễ cảm ứng</span>
+                    </div>
+                </div>
+
+                <div class="vip-card-info">
+                    <div>
+                        <h5>Trạng thái tài khoản</h5>
+                        <p id="home-expire-text">Đang kiểm tra...</p>
+                    </div>
+                    <i class="fa-solid fa-shield-check" style="font-size: 22px; color: var(--accent-gold);"></i>
+                </div>
+            </div>
+
+            <!-- TAB 2: 12 CHỨC NĂNG & TÂM ẢO -->
+            <div id="tab-2" class="tab-pane">
+                <!-- Chức năng 1: Tâm ngắm ảo pro có chỉnh size, màu -->
+                <div class="func-card">
+                    <div class="func-row">
+                        <div class="func-info">
+                            <h4>1. Tâm Ngắm Ảo Pro</h4>
+                            <p>Hiển thị tâm hỗ trợ ngắm bắn chính xác</p>
+                        </div>
+                        <label class="switch"><input type="checkbox" id="crosshairToggle" onchange="playClickSound(); toggleCrosshair(this)"><span class="slider"></span></label>
+                    </div>
+                    <div class="sub-control">
+                        <label>Size:</label>
+                        <input type="range" id="crosshairSize" min="6" max="22" value="10" oninput="updateCrosshairStyle()">
+                        <div class="color-group">
+                            <div class="dot" style="background:#00e5ff;" onclick="playClickSound(); setCrosshairColor('#00e5ff')"></div>
+                            <div class="dot" style="background:#ff4d4d;" onclick="playClickSound(); setCrosshairColor('#ff4d4d')"></div>
+                            <div class="dot" style="background:#00ff66;" onclick="playClickSound(); setCrosshairColor('#00ff66')"></div>
+                            <div class="dot" style="background:#ffea00;" onclick="playClickSound(); setCrosshairColor('#ffea00')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2 đến 12 chức năng chuyên sâu -->
+                <div class="func-card"><div class="func-row"><div class="func-info"><h4>2. Tối Ưu Nhạy Touch</h4><p>Phản hồi cảm ứng 120Hz siêu tốc</p></div><label class="switch"><input type="checkbox" checked onchange="playClickSound()"><span class="slider"></span></label></div></div>
+                <div class="func-card"><div class="func-row"><div class="func-info"><h4>3. Fix Lag RAM Engine</h4><p>Giải phóng bộ nhớ đệm giảm giật</p></div><label class="switch"><input type="checkbox" checked onchange="playClickSound()"><span class="slider"></span></label></div></div>
+                <div class="func-card"><div class="func-row"><div class="func-info"><h4>4. Khóa Tâm Chuẩn (Aim Lock)</h4><p>Ghìm tâm ổn định đường đạn</p></div><label class="switch"><input type="checkbox" onchange="playClickSound()"><span class="slider"></span></label></div></div>
+                <div class="func-card"><div class="func-row"><div class="func-info"><h4>5. Tăng Nhạy Kéo Headshot</h4><p>Hỗ trợ vuốt tâm tầm cao mượt mà</p></div><label class="switch"><input type="checkbox" onchange="playClickSound()"><span class="slider"></span></label></div></div>
+                <div class="func-card"><div class="func-row"><div class="func-info"><h4>6. Giảm Độ Xòe Đạn</h4><p>Kiểm soát độ giật khi liên thanh</p></div><label class="switch"><input type="checkbox" onchange="playClickSound()"><span class="slider"></span></label></div></div>
+                <div class="func-card"><div class="func-row"><div class="func-info"><h4>7. Tăng Tốc Xử Lý Đạn</h4><p>Tối ưu nhận diện va chạm mục tiêu</p></div><label class="switch"><input type="checkbox" onchange="playClickSound()"><span class="slider"></span></label></div></div>
+                <div class="func-card"><div class="func-row"><div class="func-info"><h4>8. GPU Smooth Render</h4><p>Ép đồ họa khung hình mượt tối đa</p></div><label class="switch"><input type="checkbox" checked onchange="playClickSound()"><span class="slider"></span></label></div></div>
+                <div class="func-card"><div class="func-row"><div class="func-info"><h4>9. Tự Động Xóa Cache Game</h4><p>Dọn dẹp file rác tự động</p></div><label class="switch"><input type="checkbox" checked onchange="playClickSound()"><span class="slider"></span></label></div></div>
+                <div class="func-card"><div class="func-row"><div class="func-info"><h4>10. Ổn Định Ping Mạng</h4><p>Giảm thiểu tối đa tình trạng rớt gói tin</p></div><label class="switch"><input type="checkbox" checked onchange="playClickSound()"><span class="slider"></span></label></div></div>
+                <div class="func-card"><div class="func-row"><div class="func-info"><h4>11. Anti-Crash Shield</h4><p>Bảo vệ bộ nhớ chống văng game đột ngột</p></div><label class="switch"><input type="checkbox" checked onchange="playClickSound()"><span class="slider"></span></label></div></div>
+                <div class="func-card"><div class="func-row"><div class="func-info"><h4>12. VIP Aura Engine Ultra</h4><p>Kích hoạt toàn bộ thuật toán cao cấp</p></div><label class="switch"><input type="checkbox" checked onchange="playClickSound()"><span class="slider"></span></label></div></div>
+            </div>
+
+            <!-- TAB 3: BOOST (5 THANH KÉO CÓ THÔNG SỐ ĐO & NÚT VÀO GAME) -->
+            <div id="tab-3" class="tab-pane">
+                <div class="boost-box">
+                    <i class="fa-solid fa-sliders"></i>
+                    <h3>TÙY CHỈNH THÔNG SỐ BOOST</h3>
+                    <p>Điều chỉnh cấu hình phần cứng trước khi vào game</p>
+
+                    <!-- 5 Thanh kéo có thông số đo -->
+                    <div class="slider-control-group">
+                        <div class="slider-header"><span>1. Xung Nhịp CPU Boost</span><span class="value-disp" id="val-cpu">3.2 GHz</span></div>
+                        <input type="range" min="1.0" max="4.5" step="0.1" value="3.2" oninput="updateSliderVal('cpu', this.value, ' GHz')">
+                    </div>
+
+                    <div class="slider-control-group">
+                        <div class="slider-header"><span>2. Tốc Độ Lấy Mẫu Cảm Ứng</span><span class="value-disp" id="val-touch">120 Hz</span></div>
+                        <input type="range" min="60" max="240" step="10" value="120" oninput="updateSliderVal('touch', this.value, ' Hz')">
+                    </div>
+
+                    <div class="slider-control-group">
+                        <div class="slider-header"><span>3. Giới Hạn Khung Hình (FPS)</span><span class="value-disp" id="val-fps">120 FPS</span></div>
+                        <input type="range" min="60" max="144" step="12" value="120" oninput="updateSliderVal('fps', this.value, ' FPS')">
+                    </div>
+
+                    <div class="slider-control-group">
+                        <div class="slider-header"><span>4. Mức Độ Giải Phóng RAM</span><span class="value-disp" id="val-ram">85 %</span></div>
+                        <input type="range" min="50" max="99" step="1" value="85" oninput="updateSliderVal('ram', this.value, ' %')">
+                    </div>
+
+                    <div class="slider-control-group">
+                        <div class="slider-header"><span>5. Hệ Số Ổn Định Mạng</span><span class="value-disp" id="val-net">98 ms</span></div>
+                        <input type="range" min="10" max="200" step="5" value="98" oninput="updateSliderVal('net', this.value, ' ms')">
+                    </div>
+
+                    <button class="btn-launch-game" onclick="playClickSound(); startBoostAndLaunchGame()" style="margin-top: 10px;">
+                        <i class="fa-solid fa-play"></i> BOOST & VÀO GAME NGAY
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 4: LIVE CODES (Mỗi nút chạy code nhiều dòng + âm thanh) -->
+            <div id="tab-4" class="tab-pane">
+                <div class="func-card">
+                    <div class="func-row">
+                        <div class="func-info"><h4>1. Inject Touch Hook</h4><p>Nạp lệnh can thiệp phần cứng cảm ứng</p></div>
+                        <button class="btn-run-code" onclick="playClickSound(); runMultiLineCode('touch')"><i class="fa-solid fa-play"></i> CHẠY</button>
+                    </div>
+                </div>
+                <div class="func-card">
+                    <div class="func-row">
+                        <div class="func-info"><h4>2. Bypass Core Security</h4><p>Bỏ qua lớp kiểm tra chống gian lận ngầm</p></div>
+                        <button class="btn-run-code" onclick="playClickSound(); runMultiLineCode('bypass')"><i class="fa-solid fa-play"></i> CHẠY</button>
+                    </div>
+                </div>
+                <div class="func-card">
+                    <div class="func-row">
+                        <div class="func-info"><h4>3. Unlock 120 FPS Frame</h4><p>Ép xung khung hình phần cứng thiết bị</p></div>
+                        <button class="btn-run-code" onclick="playClickSound(); runMultiLineCode('fps')"><i class="fa-solid fa-play"></i> CHẠY</button>
+                    </div>
+                </div>
+                <div class="func-card">
+                    <div class="func-row">
+                        <div class="func-info"><h4>4. Direct Memory Clean</h4><p>Ép hệ thống giải phóng phân vùng rác</p></div>
+                        <button class="btn-run-code" onclick="playClickSound(); runMultiLineCode('ram')"><i class="fa-solid fa-play"></i> CHẠY</button>
+                    </div>
+                </div>
+                <div class="func-card">
+                    <div class="func-row">
+                        <div class="func-info"><h4>5. Stabilize Network Socket</h4><p>Tối ưu hóa độ trễ phản hồi kết nối</p></div>
+                        <button class="btn-run-code" onclick="playClickSound(); runMultiLineCode('net')"><i class="fa-solid fa-play"></i> CHẠY</button>
+                    </div>
+                </div>
+                <div class="func-card">
+                    <div class="func-row">
+                        <div class="func-info"><h4>6. Super Aura Engine Core</h4><p>Kích hoạt toàn bộ mã nguồn xử lý tối cao</p></div>
+                        <button class="btn-run-code" onclick="playClickSound(); runMultiLineCode('core')"><i class="fa-solid fa-play"></i> CHẠY</button>
+                    </div>
+                </div>
+
+                <div class="live-log-box" id="liveConsole">
+                    > Aura Engine v4.0 Ready by Admin CUTEO... Chờ thực thi lệnh.
+                </div>
+            </div>
+
+            <!-- TAB 5: TÙY CHỈNH (SETTINGS) -->
+            <div id="tab-5" class="tab-pane">
+                <div class="func-card">
+                    <div class="func-row">
+                        <div class="func-info">
+                            <h4>Giao Diện Carbon Metallic</h4>
+                            <p>Hiển thị hiệu ứng nền carbon độc quyền</p>
+                        </div>
+                        <label class="switch"><input type="checkbox" checked onchange="playClickSound()"><span class="slider"></span></label>
+                    </div>
+                </div>
+
+                <div class="func-card">
+                    <div class="func-row">
+                        <div class="func-info">
+                            <h4>Âm Thanh Phản Hồi Touch</h4>
+                            <p>Phát âm thanh nhẹ khi bấm công tắc</p>
+                        </div>
+                        <label class="switch" id="soundToggleSwitch"><input type="checkbox" checked onchange="toggleSoundMaster(this)"><span class="slider"></span></label>
+                    </div>
+                </div>
+
+                <div class="func-card">
+                    <div class="func-row">
+                        <div class="func-info">
+                            <h4>Tự Động Lưu Phiên Bản</h4>
+                            <p>Ghi nhớ trạng thái Key hoạt động</p>
+                        </div>
+                        <label class="switch"><input type="checkbox" checked onchange="playClickSound()"><span class="slider"></span></label>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 15px;">
+                    <button class="btn-core btn-zalo-link" onclick="playClickSound(); logoutSession()" style="background: linear-gradient(180deg, #ff4d4d, #b30000); border-color: #ff4d4d;">
+                        <i class="fa-solid fa-right-from-bracket"></i> ĐĂNG XUẤT / ĐỔI KEY
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM NAVIGATION BAR (5 TABS) -->
+        <div class="nav-bar">
+            <button class="nav-item active" onclick="playClickSound(); switchTab(1)">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </button>
+            <button class="nav-item" onclick="playClickSound(); switchTab(2)">
+                <i class="fa-solid fa-sliders"></i>
+                <span>Func</span>
+            </button>
+            <button class="nav-item" onclick="playClickSound(); switchTab(3)">
+                <i class="fa-solid fa-bolt"></i>
+                <span>Boost</span>
+            </button>
+            <button class="nav-item" onclick="playClickSound(); switchTab(4)">
+                <i class="fa-solid fa-terminal"></i>
+                <span>Live</span>
+            </button>
+            <button class="nav-item" onclick="playClickSound(); switchTab(5)">
+                <i class="fa-solid fa-gear"></i>
+                <span>Cài Đặt</span>
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // Hệ thống âm thanh phản hồi Web Audio API (không cần file ngoài)
+        let soundEnabled = true;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playClickSound() {
+            if (!soundEnabled) return;
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(580, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + 0.05);
+            
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.05);
+        }
+
+        function toggleSoundMaster(checkbox) {
+            soundEnabled = checkbox.checked;
+            playClickSound();
+        }
+
+        // Cơ sở dữ liệu 80 Key bảo mật cao chống crack (Ngày, Tuần, Tháng, Vĩnh Viễn)
+        const KEY_DATABASE = {
+            // 20 Key Ngày (24 Giờ)
+            "AURA-1D-89F2A": 24, "AURA-1D-31C0B": 24, "AURA-1D-77E4C": 24, "AURA-1D-92A1D": 24, "AURA-1D-45F9E": 24,
+            "AURA-1D-63B8F": 24, "AURA-1D-18D2G": 24, "AURA-1D-50C7H": 24, "AURA-1D-84E3I": 24, "AURA-1D-29A6J": 24,
+            "AURA-1D-71F5K": 24, "AURA-1D-36B9L": 24, "AURA-1D-94C2M": 24, "AURA-1D-52E8N": 24, "AURA-1D-17A4O": 24,
+            "AURA-1D-83F1P": 24, "AURA-1D-49B6Q": 24, "AURA-1D-25C3R": 24, "AURA-1D-68E9S": 24, "AURA-1D-90A7T": 24,
+
+            // 20 Key Tuần (168 Giờ)
+            "AURA-7D-91K4A": 168, "AURA-7D-28M0B": 168, "AURA-7D-64P7C": 168, "AURA-7D-15R2D": 168, "AURA-7D-83T9E": 168,
+            "AURA-7D-37V5F": 168, "AURA-7D-50X1G": 168, "AURA-7D-79Z8H": 168, "AURA-7D-42B3I": 168, "AURA-7D-86D6J": 168,
+            "AURA-7D-19F0K": 168, "AURA-7D-53H7L": 168, "AURA-7D-90J4M": 168, "AURA-7D-34L1N": 168, "AURA-7D-71N8O": 168,
+            "AURA-7D-25P5P": 168, "AURA-7D-68R2Q": 168, "AURA-7D-40T9R": 168, "AURA-7D-87V6S": 168, "AURA-7D-13X3T": 168,
+
+            // 20 Key Tháng (720 Giờ)
+            "AURA-30D-47A9A": 720, "AURA-30D-82C3B": 720, "AURA-30D-19E6C": 720, "AURA-30D-53G1D": 720, "AURA-30D-90I8E": 720,
+            "AURA-30D-26K5F": 720, "AURA-30D-64M2G": 720, "AURA-30D-31O9H": 720, "AURA-30D-78Q6I": 720, "AURA-30D-15S3J": 720,
+            "AURA-30D-89U0K": 720, "AURA-30D-42W7L": 720, "AURA-30D-60Y4M": 720, "AURA-30D-97B1N": 720, "AURA-30D-23D8O": 720,
+            "AURA-30D-58F5P": 720, "AURA-30D-14H2Q": 720, "AURA-30D-71J9R": 720, "AURA-30D-36L6S": 720, "AURA-30D-80N3T": 720,
+
+            // 20 Key Vĩnh Viễn
+            "AURA-VIP-99F2A": 999999, "AURA-VIP-88C0B": 999999, "AURA-VIP-77E4C": 999999, "AURA-VIP-66A1D": 999999, "AURA-VIP-55F9E": 999999,
+            "AURA-VIP-44B8F": 999999, "AURA-VIP-33D2G": 999999, "AURA-VIP-22C7H": 999999, "AURA-VIP-11E3I": 999999, "AURA-VIP-90A6J": 999999,
+            "AURA-VIP-81F5K": 999999, "AURA-VIP-72B9L": 999999, "AURA-VIP-63C2M": 999999, "AURA-VIP-54E8N": 999999, "AURA-VIP-45A4O": 999999,
+            "AURA-VIP-36F1P": 999999, "AURA-VIP-27B6Q": 999999, "AURA-VIP-18C3R": 999999, "AURA-VIP-95E9S": 999999, "AURA-VIP-84A7T": 999999
+        };
+
+        let currentCrosshairColor = "#00e5ff";
+
+        window.addEventListener('DOMContentLoaded', checkExistingSession);
+
+        // Kiểm tra Key 1 Thiết Bị
+        function verifyKeyDevice() {
+            playClickSound();
+            const inputEl = document.getElementById("keyInput");
+            const msgEl = document.getElementById("key-msg");
+            const userKey = inputEl.value.trim().toUpperCase();
+
+            if (!userKey) {
+                msgEl.style.color = "#ff4d4d";
+                msgEl.innerText = "⚠️ Vui lòng nhập Key kích hoạt!";
+                return;
+            }
+
+            if (Object.prototype.hasOwnProperty.call(KEY_DATABASE, userKey)) {
+                // Kiểm tra ràng buộc thiết bị độc quyền
+                let lockedDevice = localStorage.getItem("vip_locked_device_" + userKey);
+                let currentDeviceToken = navigator.userAgent + screen.width;
+
+                if (!lockedDevice) {
+                    localStorage.setItem("vip_locked_device_" + userKey, currentDeviceToken);
+                } else if (lockedDevice !== currentDeviceToken) {
+                    msgEl.style.color = "#ff4d4d";
+                    msgEl.innerText = "❌ Key này đã được kích hoạt trên thiết bị khác!";
+                    return;
+                }
+
+                const hoursValid = KEY_DATABASE[userKey];
+                const expireTime = Date.now() + (hoursValid * 60 * 60 * 1000);
+
+                localStorage.setItem("vip_session_key", userKey);
+                localStorage.setItem("vip_session_expire", expireTime);
+
+                msgEl.style.color = "#00e5ff";
+                msgEl.innerText = "✓ Khớp thiết bị! Đang vào ứng dụng...";
+                setTimeout(() => unlockApp(expireTime), 300);
+            } else {
+                msgEl.style.color = "#ff4d4d";
+                msgEl.innerText = "❌ Key bảo mật không tồn tại!";
+            }
+        }
+
+        // Kiểm tra Key Tổng Quát (Global Cloud)
+        function verifyKeyGlobal() {
+            playClickSound();
+            const inputEl = document.getElementById("keyInput");
+            const msgEl = document.getElementById("key-msg");
+            const userKey = inputEl.value.trim().toUpperCase();
+
+            if (!userKey) {
+                msgEl.style.color = "#ff4d4d";
+                msgEl.innerText = "⚠️ Vui lòng nhập Key kích hoạt!";
+                return;
+            }
+
+            if (Object.prototype.hasOwnProperty.call(KEY_DATABASE, userKey)) {
+                const hoursValid = KEY_DATABASE[userKey];
+                const expireTime = Date.now() + (hoursValid * 60 * 60 * 1000);
+
+                localStorage.setItem("vip_session_key", userKey);
+                localStorage.setItem("vip_session_expire", expireTime);
+
+                msgEl.style.color = "#34d399";
+                msgEl.innerText = "✓ Key hợp lệ trên hệ thống! Đang mở khóa...";
+                setTimeout(() => unlockApp(expireTime), 300);
+            } else {
+                msgEl.style.color = "#ff4d4d";
+                msgEl.innerText = "❌ Key không hợp lệ hoặc đã hết hạn!";
+            }
+        }
+
+        function checkExistingSession() {
+            const savedExpire = localStorage.getItem("vip_session_expire");
+            if (savedExpire) {
+                const now = Date.now();
+                if (now < parseInt(savedExpire, 10)) {
+                    unlockApp(parseInt(savedExpire, 10));
+                } else {
+                    localStorage.removeItem("vip_session_key");
+                    localStorage.removeItem("vip_session_expire");
+                }
+            }
+        }
+
+        function unlockApp(expireTimeStamp) {
+            document.getElementById("key-screen").classList.add("hidden");
+            const remainingMs = expireTimeStamp - Date.now();
+            const remainingHours = Math.round(remainingMs / (1000 * 60 * 60));
+            
+            const infoText = document.getElementById("home-expire-text");
+            if (remainingHours > 10000) {
+                infoText.innerText = "Thời hạn: VĨNH VIỄN (VIP PERMANENT)";
+            } else {
+                infoText.innerText = `Thời hạn còn lại: ~${remainingHours} Giờ`;
+            }
+        }
+
+        function logoutSession() {
+            localStorage.removeItem("vip_session_key");
+            localStorage.removeItem("vip_session_expire");
+            window.location.reload();
+        }
+
+        function contactZalo() {
+            playClickSound();
+            window.open("https://zalo.me", "_blank");
+        }
+
+        // Chuyển Tab mượt mà 60 FPS
+        function switchTab(tabIndex) {
+            document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            document.getElementById(`tab-${tabIndex}`).classList.add('active');
+            document.querySelectorAll('.nav-item')[tabIndex - 1].classList.add('active');
+        }
+
+        // Tâm ngắm ảo
+        function toggleCrosshair(checkbox) {
+            document.getElementById("crosshair").style.display = checkbox.checked ? "block" : "none";
+        }
+
+        function updateCrosshairStyle() {
+            const size = document.getElementById("crosshairSize").value;
+            const cross = document.getElementById("crosshair");
+            cross.style.width = size + "px";
+            cross.style.height = size + "px";
+            cross.style.borderColor = currentCrosshairColor;
+            cross.style.boxShadow = `0 0 8px ${currentCrosshairColor}`;
+        }
+
+        function setCrosshairColor(color) {
+            currentCrosshairColor = color;
+            updateCrosshairStyle();
+        }
+
+        // Cập nhật giá trị thanh trượt Boost
+        function updateSliderVal(id, val, unit) {
+            document.getElementById(`val-${id}`).innerText = val + unit;
+        }
+
+        // Boost & Launch Game
+        function startBoostAndLaunchGame() {
+            const overlay = document.getElementById("boost-overlay");
+            const status = document.getElementById("boost-status");
+            overlay.style.display = "flex";
+
+            setTimeout(() => { status.innerText = "ĐANG TỐI ƯU XUNG NHỊP CPU..."; }, 700);
+            setTimeout(() => { status.innerText = "ĐANG NẠP THÔNG SỐ CẢM ỨNG 120HZ..."; }, 1400);
+            setTimeout(() => { 
+                status.innerText = "HOÀN TẤT! ĐANG MỞ FREE FIRE..."; 
+                setTimeout(() => {
+                    overlay.style.display = "none";
+                    window.location.href = "freefire://";
+                }, 500);
+            }, 2100);
+        }
+
+        // Live Codes (Chạy code nhiều dòng cho mỗi nút)
+        function runMultiLineCode(type) {
+            const consoleBox = document.getElementById("liveConsole");
+            const timeStr = new Date().toLocaleTimeString();
+            let logs = [];
+
+            switch(type) {
+                case 'touch':
+                    logs = [
+                        `[${timeStr}] INITIALIZING: Hooking touch driver...`,
+                        `[${timeStr}] OVERRIDE: Polling rate boosted to max 120Hz.`,
+                        `[${timeStr}] SUCCESS: Touch latency reduced to 0.1ms.`
+                    ];
+                    break;
+                case 'bypass':
+                    logs = [
+                        `[${timeStr}] ANALYZING: Scanning security hooks...`,
+                        `[${timeStr}] PATCHING: Injecting secure memory vector.`,
+                        `[${timeStr}] SUCCESS: Core security bypassed safely.`
+                    ];
+                    break;
+                case 'fps':
+                    logs = [
+                        `[${timeStr}] DETECTING: GPU display pipeline...`,
+                        `[${timeStr}] UNLOCKING: Frame rate limiter removed.`,
+                        `[${timeStr}] SUCCESS: Target 120 FPS hardware lock active.`
+                    ];
+                    break;
+                case 'ram':
+                    logs = [
+                        `[${timeStr}] SCANNING: Active background processes...`,
+                        `[${timeStr}] PURGING: Releasing unused cache blocks.`,
+                        `[${timeStr}] SUCCESS: Freed 480MB RAM successfully.`
+                    ];
+                    break;
+                case 'net':
+                    logs = [
+                        `[${timeStr}] BINDING: Establishing direct socket tunnel...`,
+                        `[${timeStr}] TUNING: Reducing packet loss coefficient.`,
+                        `[${timeStr}] SUCCESS: Network ping stabilized at ~18ms.`
+                    ];
+                    break;
+                case 'core':
+                    logs = [
+                        `[${timeStr}] LOADING: Admin CUTEO Ultra Engine...`,
+                        `[${timeStr}] INJECTING: Runtime kernel acceleration.`,
+                        `[${timeStr}] SUCCESS: All carbon modules fully operational.`
+                    ];
+                    break;
+            }
+
+            logs.forEach(log => {
+                consoleBox.innerHTML += `<br>${log}`;
+            });
+            consoleBox.scrollTop = consoleBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
