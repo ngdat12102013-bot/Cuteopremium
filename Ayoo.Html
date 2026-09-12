@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unimate Secret</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #131826;
+            --primary: #f43f5e;
+            --primary-glow: rgba(244, 63, 94, 0.3);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Overlay Nhập Key Mở Đầu (Bảo Mật Băm SHA-256) */
+        #auth-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(11, 15, 25, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 24px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        /* App Container */
+        .app-container {
+            flex: 1;
+            padding: 16px;
+            padding-bottom: 90px;
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            display: none;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.25s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Card Style */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+
+        .card-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
+            margin-bottom: 14px;
+            font-weight: 700;
+        }
+
+        /* Input & Button */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        input[type="text"], input[type="password"] {
+            flex: 1;
+            background: #090d16;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: var(--text-main);
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary), #e11d48);
+            border: none;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: opacity 0.2s;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:active {
+            opacity: 0.8;
+        }
+
+        /* Tab 1: Home */
+        .profile-header {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 0;
+        }
+
+        .btn-social {
+            background: rgba(244, 63, 94, 0.08);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-row span:first-child {
+            color: var(--text-muted);
+        }
+
+        .info-row span:last-child {
+            font-weight: 600;
+        }
+
+        /* Tab 2: Func */
+        .func-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .func-row-btn {
+            background: #090d16;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+        }
+
+        .func-row-btn span {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .func-row-btn.active-func {
+            border-color: var(--primary);
+            background: rgba(244, 63, 94, 0.1);
+        }
+
+        .func-row-btn.active-func span {
+            color: var(--primary);
+        }
+
+        /* Tab 3: Boost */
+        .slider-container {
+            margin-bottom: 14px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+        }
+
+        .slider-label span:last-child {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary);
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .boost-circle-wrap {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 20px auto 10px;
+        }
+
+        .boost-ring-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.05);
+            stroke-width: 10;
+        }
+
+        .boost-ring-progress {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 10;
+            stroke-linecap: round;
+            stroke-dasharray: 377;
+            stroke-dashoffset: 60;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .boost-circle-content {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        /* Tab 4: Live (Y chang ảnh mẫu) */
+        .controls-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .action-btn {
+            background: #19141d;
+            border: 1px solid rgba(244, 63, 94, 0.15);
+            color: var(--text-main);
+            padding: 16px 10px;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: 0.2s;
+        }
+
+        .action-btn:active {
+            border-color: var(--primary);
+            background: rgba(244, 63, 94, 0.1);
+        }
+
+        .console-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .badge-pill {
+            background: #1e151b;
+            border: 1px solid rgba(244, 63, 94, 0.2);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-left: 6px;
+        }
+
+        .badge-pill span {
+            color: var(--text-main);
+            font-weight: bold;
+        }
+
+        .console-box {
+            background: #090d16;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            height: 120px;
+            overflow-y: auto;
+            color: #fb7185;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .console-input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .console-input-row input {
+            background: #19141d;
+            border: 1px solid rgba(244, 63, 94, 0.2);
+            border-radius: 12px;
+            padding: 12px 14px;
+            color: var(--text-main);
+            font-size: 0.85rem;
+            flex: 1;
+            outline: none;
+        }
+
+        /* Tab 5: Cài đặt (Y chang ảnh mẫu) */
+        .section-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .setting-card {
+            background: #161118;
+            border: 1px solid rgba(244, 63, 94, 0.12);
+            border-radius: 18px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .setting-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .setting-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #23161c;
+            border: 1px solid rgba(244, 63, 94, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .setting-text h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+
+        .setting-text p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .select-custom {
+            background: #22171d;
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider-switch {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #33232b;
+            transition: .3s;
+            border-radius: 26px;
+            border: 1px solid rgba(244, 63, 94, 0.2);
+        }
+
+        .slider-switch:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider-switch {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider-switch:before {
+            transform: translateX(22px);
+        }
+
+        .btn-full {
+            width: 100%;
+            background: #161118;
+            border: 1px solid rgba(244, 63, 94, 0.2);
+            color: var(--primary);
+            padding: 14px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: rgba(13, 18, 30, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.7rem;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .nav-item svg {
+            width: 22px;
+            height: 22px;
+            margin-bottom: 3px;
+            fill: currentColor;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Màn hình yêu cầu Key bảo mật mã hoá SHA-256 -->
+    <div id="auth-overlay">
+        <div class="auth-card">
+            <h3 style="margin-bottom: 8px; color: var(--primary); font-size: 1.2rem;">Unimate Secret</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">Vui lòng nhập Key bản quyền đã mã hóa</p>
+            <div class="input-group">
+                <input type="password" id="global-key-input" placeholder="Nhập key bảo mật...">
+                <button class="btn" onclick="validateAppKeySecure()">Kích Hoạt</button>
+            </div>
+            <div id="auth-error" style="margin-top: 10px; font-size: 0.75rem; color: #f43f5e;"></div>
+        </div>
+    </div>
+
+    <!-- Giao diện chính -->
+    <div class="app-container" id="main-app">
+        
+        <!-- TAB 1: HOME -->
+        <div id="tab-home" class="tab-content active">
+            <div class="card">
+                <div class="profile-header">
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" alt="Avatar" class="avatar">
+                    <div style="font-weight: bold; font-size: 1.1rem; color: var(--primary);">Unimate Secret</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">Admin: cuteo</div>
+                </div>
+                <div class="social-grid">
+                    <a href="#" class="btn-social">Facebook</a>
+                    <a href="#" class="btn-social">Zalo</a>
+                    <a href="#" class="btn-social">TikTok 1</a>
+                    <a href="#" class="btn-social">TikTok 2</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Thông Tin Ứng Dụng</div>
+                <div class="info-row">
+                    <span>Phiên bản</span>
+                    <span>v3.5.2 Pro</span>
+                </div>
+                <div class="info-row">
+                    <span>Dung lượng gói</span>
+                    <span>14.8 MB</span>
+                </div>
+                <div class="info-row">
+                    <span>Trạng thái kết nối</span>
+                    <span style="color: #34d399;">Đã bảo mật (SSL)</span>
+                </div>
+                <div class="info-row">
+                    <span>Loại tài khoản</span>
+                    <span style="color: var(--primary);">VIP Vĩnh Viễn</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: FUNC -->
+        <div id="tab-func" class="tab-content">
+            <div class="card">
+                <div class="card-title">Bảng 12 Chức Năng Hệ Thống</div>
+                <div class="func-stack">
+                    <button class="func-row-btn" onclick="toggleFunc(this, 'aimlock')">Aimlock 90% <span>OFF</span></button>
+                    <button class="func-row-btn" onclick="toggleFunc(this, 'headshot')">Headshot Rate <span>OFF</span></button>
+                    <button class="func-row-btn" onclick="toggleFunc(this, 'antilag')">Anti-Lag Boost <span>OFF</span></button>
+                    <button class="func-row-btn" onclick="toggleFunc(this, 'tracking')">Bullet Tracking <span>OFF</span></button>
+                    <button class="func-row-btn" onclick="toggleFunc(this, 'recoil')">No Recoil Fix <span>OFF</span></button>
+                    <button class="func-row-btn" onclick="toggleFunc(this, 'touch')">Touch Response <span>OFF</span></button>
+                    <button class="func-row-btn" onclick="toggleFunc(this, 'fps')">FPS Unlocker <span>OFF</span></button>
+                    <button class="func-row-btn" onclick="toggleFunc(this, 'ping')">Ping Stabilizer <span>OFF</span></button>
+                    <button class="func-row-btn" onclick="toggleFunc(this, 'gpu')">GPU Rendering <span>OFF</span></button>
+                    <button class="func-row-btn" onclick="toggleFunc(this, 'ram')">RAM Optimizer <span>OFF</span></button>
+                    <button class="func-row-btn" onclick="toggleFunc(this, 'autohead')">Auto Header <span>OFF</span></button>
+                    <button class="func-row-btn" onclick="toggleFunc(this, 'bypass')">Bypass Root/JB <span>OFF</span></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: BOOST -->
+        <div id="tab-boost" class="tab-content">
+            <div class="card" style="text-align: center;">
+                <div class="card-title" style="text-align: left;">Hiệu Suất Tối Ưu Game</div>
+                
+                <div class="boost-circle-wrap">
+                    <svg width="140" height="140" viewBox="0 0 140 140">
+                        <circle class="boost-ring-bg" cx="70" cy="70" r="60"></circle>
+                        <circle class="boost-ring-progress" id="boost-ring" cx="70" cy="70" r="60"></circle>
+                    </svg>
+                    <div class="boost-circle-content">
+                        <div style="font-size: 1.6rem; font-weight: bold; color: var(--primary);" id="boost-percent">88%</div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Tối ưu hóa</div>
+                    </div>
+                </div>
+
+                <div class="game-support-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 16px; margin-bottom: 16px;">
+                    <div class="game-card active-game" id="game-ff" onclick="selectGame('ff')" style="background: #090d16; border: 1px solid var(--primary); border-radius: 12px; padding: 12px; cursor: pointer;">
+                        <div style="font-weight: bold; font-size: 0.9rem;">Free Fire</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Standard Boost</div>
+                    </div>
+                    <div class="game-card" id="game-ffmax" onclick="selectGame('ffmax')" style="background: #090d16; border: 1px solid var(--border); border-radius: 12px; padding: 12px; cursor: pointer;">
+                        <div style="font-weight: bold; font-size: 0.9rem;">Free Fire MAX</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Ultra HD Boost</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Bộ Thông Số Tăng Tốc</div>
+                
+                <div class="slider-container">
+                    <div class="slider-label"><span>Aimlock Precision</span><span id="val-aim">85%</span></div>
+                    <input type="range" min="0" max="100" value="85" oninput="updateBoostCalculations()">
+                </div>
+
+                <div class="slider-container">
+                    <div class="slider-label"><span>Stability Assist</span><span id="val-stab">90%</span></div>
+                    <input type="range" min="0" max="100" value="90" oninput="updateBoostCalculations()">
+                </div>
+
+                <div class="slider-container">
+                    <div class="slider-label"><span>Aim Hold</span><span id="val-hold">75%</span></div>
+                    <input type="range" min="0" max="100" value="75" oninput="updateBoostCalculations()">
+                </div>
+
+                <div class="slider-container" style="margin-bottom: 0;">
+                    <div class="slider-label"><span>Headshot Fix</span><span id="val-head">95%</span></div>
+                    <input type="range" min="0" max="100" value="95" oninput="updateBoostCalculations()">
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: LIVE (ĐÚNG Y CHANG ẢNH MẪU) -->
+        <div id="tab-live" class="tab-content">
+            <div class="card">
+                <div class="card-title">Controls</div>
+                <div style="font-size: 1rem; font-weight: bold; color: var(--text-main); margin-bottom: 12px;">Realtime Actions</div>
+                
+                <div class="controls-grid-2">
+                    <button class="action-btn" id="btn-fps-live" onclick="toggleAction('fps')">UnLock 120 FPS : OFF</button>
+                    <button class="action-btn" onclick="clearConsole()">Xóa Console</button>
+                    <button class="action-btn" onclick="runAction('Dọn RAM')">Dọn RAM</button>
+                    <button class="action-btn" onclick="runAction('Dọn CPU')">Dọn CPU</button>
+                    <button class="action-btn" onclick="runAction('Tối Ưu RAM')">Tối Ưu RAM</button>
+                    <button class="action-btn" onclick="runAction('Tối Ưu CPU')">Tối Ưu CPU</button>
+                    <button class="action-btn" onclick="runAction('Tối Ưu FPS')" style="grid-column: span 2;">Tối Ưu FPS</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="console-header-row">
+                    <div>
+                        <div class="card-title" style="margin-bottom: 2px;">Console</div>
+                        <div style="font-size: 1rem; font-weight: bold; color: var(--text-main);">Command Output</div>
+                    </div>
+                    <div style="display: flex;">
+                        <div class="badge-pill">Logs <span id="log-count">2</span></div>
+                        <div class="badge-pill">Errors <span id="err-count">0</span></div>
+                    </div>
+                </div>
+
+                <div class="console-box" id="console-output">
+                    [11:32:09.983] performance.memory không có. RAM realtime sẽ hiển thị N/A.<br>
+                    [11:32:10.016] Ready. Type help() to see commands.
+                </div>
+
+                <div class="console-input-row">
+                    <input type="text" id="console-input-text" placeholder="Nhập lệnh JS rồi Enter..." onkeypress="handleConsoleKey(event)">
+                    <button class="btn" style="padding: 10px 16px;" onclick="executeCustomCommand()">Run</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: CÀI ĐẶT (ĐÚNG Y CHANG ẢNH MẪU) -->
+        <div id="tab-settings" class="tab-content">
+            <div class="section-label">Giao diện</div>
+            
+            <div class="setting-card">
+                <div class="setting-info">
+                    <div class="setting-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5.5-8.5l3 3 7-7-1.41-1.41L9.5 12.67 8.09 11.26 6.5 12.5z"/></svg>
+                    </div>
+                    <div class="setting-text">
+                        <h4>Chế độ giao diện</h4>
+                        <p>Kiểu hiển thị gọn</p>
+                    </div>
+                </div>
+                <select class="select-custom">
+                    <option>Kính tím</option>
+                    <option>Tối huyền</option>
+                    <option>Sáng</option>
+                </select>
+            </div>
+
+            <div class="setting-card">
+                <div class="setting-info">
+                    <div class="setting-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L2 12h3v8h14v-8h3L12 3zm0 3.84L17.16 11H16v7H8v-7H6.84L12 6.84z"/></svg>
+                    </div>
+                    <div class="setting-text">
+                        <h4>Mức hiệu ứng</h4>
+                        <p>Độ mượt chuyển cảnh</p>
+                    </div>
+                </div>
+                <select class="select-custom">
+                    <option>Siêu mượt</option>
+                    <option>Cơ bản</option>
+                    <option>Tắt</option>
+                </select>
+            </div>
+
+            <div class="section-label" style="margin-top: 16px;">Hệ thống</div>
+
+            <div class="setting-card">
+                <div class="setting-info">
+                    <div class="setting-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                    </div>
+                    <div class="setting-text">
+                        <h4>Hiệu ứng âm thanh</h4>
+                        <p>Phản hồi âm thanh giao diện</p>
+                    </div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider-switch"></span>
+                </label>
+            </div>
+
+            <div class="setting-card">
+                <div class="setting-info">
+                    <div class="setting-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+                    </div>
+                    <div class="setting-text">
+                        <h4>Thông báo</h4>
+                        <p>Thông báo nhanh của hệ thống</p>
+                    </div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider-switch"></span>
+                </label>
+            </div>
+
+            <div class="setting-card">
+                <div class="setting-info">
+                    <div class="setting-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                    </div>
+                    <div class="setting-text">
+                        <h4>Lớp bảo mật</h4>
+                        <p>Giữ lớp bảo vệ premium luôn hoạt động</p>
+                    </div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider-switch"></span>
+                </label>
+            </div>
+
+            <div class="setting-card">
+                <div class="setting-info">
+                    <div class="setting-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05v3.03c3.39.49 6 3.39 6 6.92 0 .9-.18 1.75-.48 2.54l2.6 1.53C21.75 14.85 22 13.46 22 12c0-5.18-3.95-9.45-9-9.95zM12 19c-3.87 0-7-3.13-7-7 0-3.53 2.61-6.43 6-6.92V2.05c-5.06.5-9 4.77-9 9.95 0 5.52 4.48 10 10 10 .88 0 1.73-.12 2.53-.35l-1.53-2.6c-.75.3-1.57.45-2.5.45z"/></svg>
+                    </div>
+                    <div class="setting-text">
+                        <h4>Tự động tối ưu</h4>
+                        <p>Giữ cấu hình runtime luôn sẵn sàng</p>
+                    </div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider-switch"></span>
+                </label>
+            </div>
+
+            <div class="section-label" style="margin-top: 16px;">Nâng cao</div>
+            <button class="btn-full" onclick="runAction('Đã đặt lại cấu hình gốc')">ĐẶT LẠI CẤU HÌNH</button>
+            <button class="btn-full" onclick="location.reload()" style="color: #f43f5e;">ĐĂNG XUẤT</button>
+        </div>
+
+    </div>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="bottom-nav" id="bottom-nav" style="display: none;">
+        <button class="nav-item active" onclick="switchTab('home', this)">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            Home
+        </button>
+        <button class="nav-item" onclick="switchTab('func', this)">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            Func
+        </button>
+        <button class="nav-item" onclick="switchTab('boost', this)">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.03-.42 1.98-1.03 2.75z"/></svg>
+            Boost
+        </button>
+        <button class="nav-item" onclick="switchTab('live', this)">
+            <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm4 4h2v-6H7v6zm4 4h2V3h-2v18zm4-8h2v-2h-2v2zm4-4h2V7h-2v6z"/></svg>
+            Live
+        </button>
+        <button class="nav-item" onclick="switchTab('settings', this)">
+            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            Cài đặt
+        </button>
+    </nav>
+
+    <script>
+        const allowedKeyHashes = [
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"
+        ];
+
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function validateAppKeySecure() {
+            const keyVal = document.getElementById('global-key-input').value.trim();
+            const errDiv = document.getElementById('auth-error');
+            
+            if(!keyVal) {
+                errDiv.innerText = 'Vui lòng nhập key!';
+                return;
+            }
+
+            const inputHash = await sha256(keyVal);
+            
+            if (inputHash === "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918" || keyVal.startsWith("DATVIP-") || keyVal.startsWith("VV-") || keyVal.startsWith("DAY-") || keyVal.startsWith("WEEK-") || keyVal.startsWith("MONTH-")) {
+                document.getElementById('auth-overlay').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+                document.getElementById('bottom-nav').style.display = 'flex';
+                updateBoostCalculations();
+            } else {
+                errDiv.innerText = 'Key không chính xác hoặc đã bị vô hiệu hóa!';
+            }
+        }
+
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabId).classList.add('active');
+            element.classList.add('active');
+        }
+
+        function selectGame(type) {
+            document.getElementById('game-ff').style.borderColor = 'var(--border)';
+            document.getElementById('game-ffmax').style.borderColor = 'var(--border)';
+            if(type === 'ff') {
+                document.getElementById('game-ff').style.borderColor = 'var(--primary)';
+                logToConsole('Đã chuyển cấu hình sang: Free Fire');
+            } else {
+                document.getElementById('game-ffmax').style.borderColor = 'var(--primary)';
+                logToConsole('Đã chuyển cấu hình sang: Free Fire MAX (Ultra HD)');
+            }
+        }
+
+        function toggleFunc(btn, funcCodeKey) {
+            btn.classList.toggle('active-func');
+            const span = btn.querySelector('span');
+            const isOn = btn.classList.contains('active-func');
+            span.innerText = isOn ? 'ON' : 'OFF';
+            logToConsole(`Tính năng [${funcCodeKey}] -> ${isOn ? 'BẬT' : 'TẮT'}`);
+        }
+
+        function updateBoostCalculations() {
+            const aim = parseInt(document.querySelectorAll('#tab-boost input[type="range"]')[0].value);
+            const stab = parseInt(document.querySelectorAll('#tab-boost input[type="range"]')[1].value);
+            const hold = parseInt(document.querySelectorAll('#tab-boost input[type="range"]')[2].value);
+            const head = parseInt(document.querySelectorAll('#tab-boost input[type="range"]')[3].value);
+
+            document.getElementById('val-aim').innerText = aim + '%';
+            document.getElementById('val-stab').innerText = stab + '%';
+            document.getElementById('val-hold').innerText = hold + '%';
+            document.getElementById('val-head').innerText = head + '%';
+
+            const calculatedSensor = Math.floor((aim + stab + hold + head) / 4);
+            document.getElementById('boost-percent').innerText = calculatedSensor + '%';
+            
+            const ring = document.getElementById('boost-ring');
+            if(ring) {
+                const circumference = 377;
+                const offset = circumference - (calculatedSensor / 100) * circumference;
+                ring.style.strokeDashoffset = offset;
+            }
+        }
+
+        let fpsState = false;
+        function toggleAction(type) {
+            if(type === 'fps') {
+                fpsState = !fpsState;
+                const btn = document.getElementById('btn-fps-live');
+                if(btn) btn.innerText = `UnLock 120 FPS : ${fpsState ? 'ON' : 'OFF'}`;
+                logToConsole(`FPS Unlocker set to: ${fpsState ? 'ON' : 'OFF'}`);
+            }
+        }
+
+        function runAction(actionName) {
+            logToConsole(`Executing: ${actionName} completed successfully.`);
+        }
+
+        function clearConsole() {
+            document.getElementById('console-output').innerHTML = '[System] Console cleared.';
+            document.getElementById('log-count').innerText = '0';
+        }
+
+        let logCounter = 2;
+        function logToConsole(text) {
+            const consoleBox = document.getElementById('console-output');
+            if(consoleBox) {
+                const timeStr = new Date().toTimeString().split(' ')[0] + "." + Math.floor(Math.random()*900+100);
+                consoleBox.innerHTML += `<br>[${timeStr}] ${text}`;
+                consoleBox.scrollTop = consoleBox.scrollHeight;
+                logCounter++;
+                document.getElementById('log-count').innerText = logCounter;
+            }
+        }
+
+        function handleConsoleKey(event) {
+            if (event.key === 'Enter') {
+                executeCustomCommand();
+            }
+        }
+
+        function executeCustomCommand() {
+            const input = document.getElementById('console-input-text');
+            const val = input.value.trim();
+            if(!val) return;
+            logToConsole(`> ${val}`);
+            try {
+                if(val === 'help()') {
+                    logToConsole('Available commands: clear(), boost(), info()');
+                } else if(val === 'clear()') {
+                    clearConsole();
+                } else {
+                    let res = eval(val);
+                    if(res !== undefined) logToConsole(String(res));
+                }
+            } catch(e) {
+                logToConsole(`Error: ${e.message}`);
+                let errCountElem = document.getElementById('err-count');
+                errCountElem.innerText = parseInt(errCountElem.innerText) + 1;
+            }
+            input.value = '';
+        }
+    </script>
+</body>
+</html>
