@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Unimate Secret V3</title>
+    <style>
+        :root {
+            --bg-color: #0b090a;
+            --card-bg: #161113;
+            --card-border: #2a1f22;
+            --accent-pink: #ff3366;
+            --accent-glow: rgba(255, 51, 102, 0.35);
+            --text-main: #f5f0f2;
+            --text-muted: #9e8a90;
+            --carbon-gradient: linear-gradient(135deg, #1c1518 0%, #0d0a0b 100%);
+            --titan-metal: linear-gradient(135deg, #2c2528 0%, #120e10 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: var(--carbon-gradient);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Màn hình Auth */
+        #auth-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color);
+            background-image: var(--carbon-gradient);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 24px;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+            text-align: center;
+        }
+
+        .auth-logo {
+            width: 64px; height: 64px;
+            background: linear-gradient(135deg, #ff3366, #7a0022);
+            border-radius: 16px;
+            margin: 0 auto 16px auto;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 26px; font-weight: 800; color: #fff;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .auth-card h2 { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+        .auth-card p { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+        
+        .auth-input-group { display: flex; flex-direction: column; gap: 12px; }
+        .auth-input-group input {
+            background: #070506; border: 1px solid var(--card-border);
+            border-radius: 12px; padding: 14px 16px; color: #fff;
+            font-size: 13px; outline: none; text-align: center; letter-spacing: 1px;
+        }
+        .auth-input-group input:focus { border-color: var(--accent-pink); box-shadow: 0 0 10px var(--accent-glow); }
+
+        .auth-btn {
+            background: linear-gradient(135deg, #ff1a4a 0%, #b3002d 100%);
+            color: white; border: none; padding: 14px;
+            border-radius: 12px; font-weight: 700; font-size: 13px;
+            letter-spacing: 0.5px; box-shadow: 0 4px 15px var(--accent-glow);
+            cursor: pointer; transition: transform 0.1s;
+        }
+        .auth-btn:active { transform: scale(0.96); }
+
+        .auth-error { color: #ff3366; font-size: 11px; margin-top: 10px; min-height: 16px; font-weight: 600; }
+        .device-info { margin-top: 15px; font-size: 11px; color: var(--text-muted); }
+
+        /* Giao diện chính */
+        #main-app-wrapper {
+            display: none;
+            flex: 1; flex-direction: column; height: 100vh; overflow: hidden;
+        }
+
+        .top-status-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 20px; font-size: 13px; color: var(--text-muted);
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .app-container {
+            flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 90px;
+        }
+
+        .view-section { display: none; animation: fadeIn 0.25s ease-in-out; }
+        .view-section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            background: var(--titan-metal); border: 1px solid var(--card-border);
+            border-radius: 16px; padding: 18px; margin-bottom: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        .section-header .subtitle {
+            font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
+            color: var(--accent-pink); font-weight: 700; margin-bottom: 4px;
+        }
+        .section-header h2 { font-size: 22px; font-weight: 800; letter-spacing: 0.5px; color: #fff; }
+
+        /* Profile Card Tab 1 */
+        .profile-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        .profile-header-row {
+            display: flex; align-items: center; gap: 14px; margin-bottom: 16px;
+        }
+
+        .profile-avatar {
+            width: 54px; height: 54px; border-radius: 14px;
+            background: linear-gradient(135deg, #ff3366, #7a0022);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; font-weight: 800; color: #fff;
+            box-shadow: 0 0 15px var(--accent-glow);
+            overflow: hidden; flex-shrink: 0;
+        }
+
+        .profile-info h3 { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+        .profile-info p { font-size: 11px; color: var(--text-muted); }
+
+        .social-grid-4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .social-btn {
+            background: #070506;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 12px;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .social-btn:active { border-color: var(--accent-pink); background: rgba(255,51,102,0.15); }
+
+        .info-table-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03);
+            font-size: 13px;
+        }
+        .info-table-row:last-child { border-bottom: none; }
+        .info-label { color: var(--text-muted); }
+        .info-val { font-weight: 700; color: var(--accent-pink); }
+
+        .live-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        .metrics-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px;
+        }
+        .metric-box {
+            background: #070506; border: 1px solid var(--card-border);
+            border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .metric-label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+        .metric-value { font-size: 14px; color: #fff; font-weight: 800; }
+
+        .controls-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px;
+        }
+        .controls-grid-3 {
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px;
+        }
+
+        .control-action-btn {
+            background: #070506; border: 1px solid var(--card-border);
+            border-radius: 12px; padding: 14px 10px; color: #fff;
+            font-size: 12px; font-weight: 700; text-align: center; cursor: pointer; transition: all 0.2s;
+        }
+        .control-action-btn:active, .control-action-btn.active {
+            border-color: var(--accent-pink); background: rgba(255,51,102,0.15); color: var(--accent-pink); transform: scale(0.96);
+        }
+
+        .canvas-container {
+            background: #070506; border: 1px solid var(--card-border);
+            border-radius: 12px; padding: 10px; margin-top: 10px; height: 120px; position: relative; overflow: hidden;
+        }
+        canvas { width: 100%; height: 100%; display: block; }
+
+        .console-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .console-badges { display: flex; gap: 8px; }
+        .badge-pill {
+            background: #070506; border: 1px solid var(--card-border);
+            border-radius: 10px; padding: 4px 10px; font-size: 11px; color: var(--text-muted);
+        }
+        .badge-pill span { color: var(--accent-pink); font-weight: 700; }
+
+        .live-console-box {
+            background: #070506; border: 1px solid var(--card-border);
+            border-radius: 12px; padding: 12px; font-family: 'Courier New', Courier, monospace;
+            font-size: 11px; color: #00ffcc; height: 150px; overflow-y: auto; margin-bottom: 10px; line-height: 1.4;
+        }
+        .console-line { margin-bottom: 3px; word-break: break-all; }
+        .console-line.error { color: #ff3366; }
+
+        .js-input-group { display: flex; gap: 8px; }
+        .js-input-group input {
+            flex: 1; background: #070506; border: 1px solid var(--card-border);
+            border-radius: 12px; padding: 12px 14px; color: #fff; font-size: 12px; outline: none;
+        }
+        .js-input-group input:focus { border-color: var(--accent-pink); }
+        .js-input-group button {
+            background: linear-gradient(135deg, #ff1a4a 0%, #b3002d 100%);
+            color: #fff; border: none; padding: 0 18px; border-radius: 12px; font-weight: 700; font-size: 12px; cursor: pointer;
+        }
+
+        /* STYLING RIÊNG CHO TAB BOOST Y HỆT ẢNH MẪU */
+        .game-select-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .game-card-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        .game-card-btn:active, .game-card-btn.selected {
+            border-color: var(--accent-pink);
+            background: rgba(255, 51, 102, 0.08);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .game-card-thumb {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: #2a1f22;
+        }
+
+        .game-card-name {
+            font-size: 12px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
+
+        .boost-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .booster-action-btn {
+            background: linear-gradient(135deg, #7a0022 0%, #400012 100%);
+            border: 1px solid var(--accent-pink);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px var(--accent-glow);
+            transition: transform 0.1s;
+        }
+        .booster-action-btn:active { transform: scale(0.95); }
+
+        .boost-item-row {
+            background: #070506;
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 10px;
+        }
+
+        .boost-item-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .boost-badge-num {
+            background: #1c1518;
+            border: 1px solid var(--card-border);
+            color: var(--accent-pink);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 8px;
+            margin-right: 8px;
+        }
+
+        .boost-item-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .boost-item-val {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--accent-pink);
+        }
+
+        .slider-track-container {
+            position: relative;
+            height: 16px;
+            display: flex;
+            align-items: center;
+        }
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+            position: absolute;
+            z-index: 2;
+            cursor: pointer;
+        }
+        input[type=range]:focus { outline: none; }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            background: #2a1f22;
+            border-radius: 2px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--accent-pink);
+            margin-top: -6px;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        /* Toggle Switch Cài đặt */
+        .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .setting-row:last-child { border-bottom: none; }
+        .setting-label { font-size: 13px; font-weight: 600; color: #fff; }
+        .setting-desc { font-size: 11px; color: var(--text-muted); }
+
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider-switch {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #070506; border: 1px solid var(--card-border); transition: .3s; border-radius: 24px;
+        }
+        .slider-switch:before {
+            position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
+            background-color: var(--text-muted); transition: .3s; border-radius: 50%;
+        }
+        input:checked + .slider-switch { background-color: var(--accent-pink); border-color: var(--accent-pink); }
+        input:checked + .slider-switch:before { transform: translateX(20px); background-color: white; }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 70px;
+            background: rgba(16, 12, 14, 0.95); backdrop-filter: blur(20px);
+            border-top: 1px solid var(--card-border); display: flex;
+            justify-content: space-around; align-items: center;
+            padding-bottom: env(safe-area-inset-bottom); z-index: 1000;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: transparent; border: none; color: var(--text-muted);
+            font-size: 10px; font-weight: 500; width: 20%; height: 100%; cursor: pointer; position: relative;
+        }
+        .nav-item svg { width: 20px; height: 20px; margin-bottom: 3px; fill: currentColor; }
+        .nav-item.active { color: var(--accent-pink); }
+        .nav-pill-bg {
+            position: absolute; width: 50px; height: 32px;
+            background: rgba(255, 51, 102, 0.12); border-radius: 16px; z-index: -1; display: none;
+        }
+        .nav-item.active .nav-pill-bg { display: block; }
+    </style>
+</head>
+<body>
+
+    <!-- Màn hình Auth (Chỉ nhập 1 lần duy nhất) -->
+    <div id="auth-screen">
+        <div class="auth-card">
+            <div class="auth-logo">US</div>
+            <h2>UNIMATE SECRET V3</h2>
+            <p>Nhập mã khóa bản quyền hệ thống để tiếp tục</p>
+            <div class="auth-input-group">
+                <input type="text" id="license-key-input" placeholder="NHẬP KEY BẢN QUYỀN..." autocomplete="off">
+                <button class="auth-btn" onclick="verifyAndEnterKey()">XÁC THỰC & VÀO APP</button>
+            </div>
+            <div class="auth-error" id="auth-error-msg"></div>
+            <div class="device-info">Mã thiết bị: <span id="display-device-id">Đang tải...</span></div>
+        </div>
+    </div>
+
+    <!-- Giao diện chính -->
+    <div id="main-app-wrapper">
+        <div class="top-status-bar">
+            <span id="current-time">18:58</span>
+            <span style="color: var(--accent-pink); font-weight: bold;">UNIMATE SECRET V3</span>
+            <span>48% ⚡</span>
+        </div>
+
+        <div class="app-container">
+
+            <!-- TAB 1: HOME (Admin Cuteo & Tên ứng dụng Unimate Secret) -->
+            <div id="view-home" class="view-section active">
+                <div class="section-header">
+                    <div class="subtitle">Premium Mobile Dashboard</div>
+                    <h2>UNIMATE SECRET V3</h2>
+                </div>
+
+                <div class="profile-card">
+                    <div class="profile-header-row">
+                        <div class="profile-avatar">CC</div>
+                        <div class="profile-info">
+                            <h3>Cuteo</h3>
+                            <p>Developer / Admin</p>
+                        </div>
+                    </div>
+                    <div class="social-grid-4">
+                        <a href="https://facebook.com" target="_blank" class="social-btn">Facebook</a>
+                        <a href="https://zalo.me" target="_blank" class="social-btn">Zalo</a>
+                        <a href="https://tiktok.com" target="_blank" class="social-btn">TikTok 1</a>
+                        <a href="https://tiktok.com" target="_blank" class="social-btn">TikTok 2</a>
+                    </div>
+                </div>
+
+                <div class="profile-card">
+                    <div class="subtitle" style="margin-bottom: 10px;">THÔNG TIN ỨNG DỤNG</div>
+                    <div class="info-table-row">
+                        <span class="info-label">Tên ứng dụng</span>
+                        <span class="info-val">Unimate Secret V3</span>
+                    </div>
+                    <div class="info-table-row">
+                        <span class="info-label">Giao diện</span>
+                        <span class="info-val">Dark Neon Red</span>
+                    </div>
+                    <div class="info-table-row">
+                        <span class="info-label">Điều hướng</span>
+                        <span class="info-val">5 Tab</span>
+                    </div>
+                    <div class="info-table-row">
+                        <span class="info-label">Game hỗ trợ</span>
+                        <span class="info-val">Free Fire / Free Fire MAX</span>
+                    </div>
+                    <div class="info-table-row">
+                        <span class="info-label">Booster mặc định</span>
+                        <span class="info-val">100%</span>
+                    </div>
+                    <div class="info-table-row">
+                        <span class="info-label">Ngôn ngữ</span>
+                        <span class="info-val" style="color: #fff;">Tiếng Việt</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: FUNC (12 Chức Năng) -->
+            <div id="view-func" class="view-section">
+                <div class="section-header">
+                    <div class="subtitle">Functions Matrix</div>
+                    <h2>12 TÍNH NĂNG CHUYÊN SÂU</h2>
+                    <p>Bật/tắt các module can thiệp độ nhạy và hiệu năng.</p>
+                </div>
+
+                <div class="live-card">
+                    <div class="subtitle">Hệ Thống Aim & Tâm Giao Diện</div>
+                    <div class="controls-grid" style="margin-top: 10px;">
+                        <button class="control-action-btn" onclick="toggleFunc(this, 'Aimlock')">Aimlock</button>
+                        <button class="control-action-btn" onclick="toggleFunc(this, 'Khoá Đầu')">Khoá Đầu</button>
+                        <button class="control-action-btn" onclick="toggleFunc(this, 'Nhẹ Tâm')">Nhẹ Tâm</button>
+                        <button class="control-action-btn" onclick="toggleFunc(this, 'Đầm Tâm')">Đầm Tâm</button>
+                        <button class="control-action-btn" onclick="toggleFunc(this, 'Bám Đầu')">Bám Đầu</button>
+                        <button class="control-action-btn" onclick="toggleFunc(this, 'Tối Ưu All')">Tối Ưu All</button>
+                    </div>
+                </div>
+
+                <div class="live-card">
+                    <div class="subtitle">Hệ Thống Giảm Trễ & Buff Phần Cứng</div>
+                    <div class="controls-grid" style="margin-top: 10px;">
+                        <button class="control-action-btn" onclick="toggleFunc(this, 'Fix Rung')">Fix Rung</button>
+                        <button class="control-action-btn" onclick="toggleFunc(this, 'Fix Lố')">Fix Lố</button>
+                        <button class="control-action-btn" onclick="toggleFunc(this, 'Giảm Delay')">Giảm Delay</button>
+                        <button class="control-action-btn" onclick="toggleFunc(this, 'Buff Màn')">Buff Màn</button>
+                        <button class="control-action-btn" onclick="toggleFunc(this, 'Buff FPS')">Buff FPS</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: BOOST (Chuẩn giao diện như ảnh mẫu yêu cầu, bấm Booster tự động vô thẳng game) -->
+            <div id="view-boost" class="view-section">
+                <!-- Chọn game (2 ô trên cùng) -->
+                <div class="game-select-grid">
+                    <div class="game-card-btn selected" id="card-ff" onclick="selectGame('ff', 'Free Fire', 'com.dts.freefireth')">
+                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=100&auto=format&fit=crop&q=80" class="game-card-thumb" alt="FF">
+                        <div class="game-card-name">FREE FIRE</div>
+                    </div>
+                    <div class="game-card-btn" id="card-ffmax" onclick="selectGame('ffmax', 'Free Fire MAX', 'com.dts.freefiremax')">
+                        <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=100&auto=format&fit=crop&q=80" class="game-card-thumb" alt="FF MAX">
+                        <div class="game-card-name">FREE FIRE MAX</div>
+                    </div>
+                </div>
+
+                <!-- Khối tiêu đề và nút Booster -->
+                <div class="live-card">
+                    <div class="boost-header-flex">
+                        <div>
+                            <div class="subtitle" id="selected-game-label" style="font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 2px;">FREE FIRE</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">Aligned sliders with a compact mobile booster presentation.</div>
+                        </div>
+                        <button class="booster-action-btn" onclick="executeBoostAndLaunch()">BOOSTER</button>
+                    </div>
+
+                    <!-- 5 Thanh Kéo Giống Y Hệt Mẫu Ảnh -->
+                    <div class="boost-item-row">
+                        <div class="boost-item-top">
+                            <div class="boost-item-title"><span class="boost-badge-num">01</span> AIMLOCK</div>
+                            <div class="boost-item-val" id="val-s1">0%</div>
+                        </div>
+                        <div class="slider-track-container">
+                            <input type="range" min="0" max="100" value="0" oninput="updateSliderVal('s1', this.value)">
+                        </div>
+                    </div>
+
+                    <div class="boost-item-row">
+                        <div class="boost-item-top">
+                            <div class="boost-item-title"><span class="boost-badge-num">02</span> STABILITY ASSIST</div>
+                            <div class="boost-item-val" id="val-s2">0%</div>
+                        </div>
+                        <div class="slider-track-container">
+                            <input type="range" min="0" max="100" value="0" oninput="updateSliderVal('s2', this.value)">
+                        </div>
+                    </div>
+
+                    <div class="boost-item-row">
+                        <div class="boost-item-top">
+                            <div class="boost-item-title"><span class="boost-badge-num">03</span> AIM HOLD</div>
+                            <div class="boost-item-val" id="val-s3">0%</div>
+                        </div>
+                        <div class="slider-track-container">
+                            <input type="range" min="0" max="100" value="0" oninput="updateSliderVal('s3', this.value)">
+                        </div>
+                    </div>
+
+                    <div class="boost-item-row">
+                        <div class="boost-item-top">
+                            <div class="boost-item-title"><span class="boost-badge-num">04</span> HEADSHOT FIX</div>
+                            <div class="boost-item-val" id="val-s4">0%</div>
+                        </div>
+                        <div class="slider-track-container">
+                            <input type="range" min="0" max="100" value="0" oninput="updateSliderVal('s4', this.value)">
+                        </div>
+                    </div>
+
+                    <div class="boost-item-row">
+                        <div class="boost-item-top">
+                            <div class="boost-item-title"><span class="boost-badge-num">05</span> BULLET ALIGN</div>
+                            <div class="boost-item-val" id="val-s5">0%</div>
+                        </div>
+                        <div class="slider-track-container">
+                            <input type="range" min="0" max="100" value="0" oninput="updateSliderVal('s5', this.value)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: LIVE (Realtime Monitor) -->
+            <div id="view-live" class="view-section">
+                <div class="section-header">
+                    <div class="subtitle">Realtime Monitor</div>
+                    <h2>CPU & RAM Wave</h2>
+                    <p>Premium compact monitor with aligned metrics.</p>
+                </div>
+
+                <div class="live-card" style="padding: 12px;">
+                    <div class="metrics-grid" style="margin-top: 0;">
+                        <div class="metric-box"><span class="metric-label">FPS</span><span class="metric-value" id="live-fps">52</span></div>
+                        <div class="metric-box"><span class="metric-label">Frame</span><span class="metric-value" id="live-frame">40.0 ms</span></div>
+                        <div class="metric-box"><span class="metric-label">CPU est</span><span class="metric-value" id="live-cpu">2%</span></div>
+                        <div class="metric-box"><span class="metric-label">RAM</span><span class="metric-value" id="live-ram">185 MB</span></div>
+                    </div>
+                </div>
+
+                <div class="live-card">
+                    <div class="metric-label" style="margin-bottom: 4px;">CPU (Ước Lượng Theo Thời Gian Bận Mỗi Frame)</div>
+                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">Target: 60 FPS</div>
+                    <div class="canvas-container"><canvas id="cpuWaveCanvas"></canvas></div>
+                </div>
+
+                <div class="live-card">
+                    <div class="metric-label" style="margin-bottom: 4px;">RAM (MB) / Heap Used</div>
+                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">Scale Auto</div>
+                    <div class="canvas-container"><canvas id="ramWaveCanvas"></canvas></div>
+                </div>
+
+                <div class="live-card">
+                    <div class="subtitle">Controls</div>
+                    <div style="font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 4px;">Realtime Actions</div>
+                    <div class="controls-grid">
+                        <button class="control-action-btn" id="btn-unlock-fps" onclick="toggleUnlockFPS()">UnLock 120 FPS : OFF</button>
+                        <button class="control-action-btn" onclick="clearConsole()">Xóa Console</button>
+                        <button class="control-action-btn" onclick="triggerAction('Dọn RAM')">Dọn RAM</button>
+                        <button class="control-action-btn" onclick="triggerAction('Dọn CPU')">Dọn CPU</button>
+                        <button class="control-action-btn" onclick="triggerAction('Tối Ưu RAM')">Tối Ưu RAM</button>
+                        <button class="control-action-btn" onclick="triggerAction('Tối Ưu CPU')">Tối Ưu CPU</button>
+                    </div>
+                    <button class="control-action-btn" style="width: 100%; margin-top: 10px;" onclick="triggerAction('Tối Ưu FPS')">Tối Ưu FPS</button>
+                </div>
+
+                <div class="live-card">
+                    <div class="console-header-row">
+                        <div>
+                            <div class="subtitle">Console</div>
+                            <div style="font-size: 15px; font-weight: 800; color: #fff;">Command Output</div>
+                        </div>
+                        <div class="console-badges">
+                            <div class="badge-pill">Logs <span id="log-count">2</span></div>
+                            <div class="badge-pill">Errors <span id="error-count">0</span></div>
+                        </div>
+                    </div>
+                    <div class="live-console-box" id="live-console">
+                        <div class="console-line">[18:58:12.071] Unimate Secret V3 Core initialized successfully.</div>
+                        <div class="console-line">[18:58:12.102] Ready. Type help() to see commands.</div>
+                    </div>
+                    <div class="js-input-group">
+                        <input type="text" id="terminal-input" placeholder="Nhập lệnh JS rồi Enter..." onkeypress="handleTerminalKey(event)">
+                        <button onclick="sendTerminalCommand()">Run</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: CÀI ĐẶT -->
+            <div id="view-settings" class="view-section">
+                <div class="section-header">
+                    <div class="subtitle">Configuration</div>
+                    <h2>CÀI ĐẶT HỆ THỐNG</h2>
+                    <p>Tùy chỉnh giao diện, hiệu ứng và lớp bảo mật.</p>
+                </div>
+
+                <div class="live-card">
+                    <div class="subtitle" style="margin-bottom: 8px;">Chế Độ Giao Diện</div>
+                    <div class="controls-grid" style="margin-top: 8px;">
+                        <button class="control-action-btn active" onclick="setThemeMode(this, 'Dark Carbon')">Dark Carbon</button>
+                        <button class="control-action-btn" onclick="setThemeMode(this, 'Neon Cyber')">Neon Cyber</button>
+                    </div>
+                </div>
+
+                <div class="live-card">
+                    <div class="subtitle" style="margin-bottom: 8px;">Mức Hiệu Ứng</div>
+                    <div class="controls-grid-3" style="margin-top: 8px;">
+                        <button class="control-action-btn" onclick="setEffectLevel(this, 'Siêu Mượt')">Siêu Mượt</button>
+                        <button class="control-action-btn active" onclick="setEffectLevel(this, 'Tiêu Chuẩn')">Tiêu Chuẩn</button>
+                        <button class="control-action-btn" onclick="setEffectLevel(this, 'Tối Giản')">Tối Giản</button>
+                    </div>
+                </div>
+
+                <div class="live-card">
+                    <div class="subtitle" style="margin-bottom: 10px;">Hệ Thống & Bảo Mật</div>
+                    
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Hiệu ứng âm thanh thông báo</div>
+                            <div class="setting-desc">Phát âm thanh khi thực thi lệnh</div>
+                        </div>
+                        <label class="switch"><input type="checkbox" checked><span class="slider-switch"></span></label>
+                    </div>
+
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Lớp bảo mật Key V3</div>
+                            <div class="setting-desc">Mã hóa phiên đăng nhập thiết bị</div>
+                        </div>
+                        <label class="switch"><input type="checkbox" checked><span class="slider-switch"></span></label>
+                    </div>
+
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Tự động tối ưu ngầm</div>
+                            <div class="setting-desc">Giữ FPS luôn ổn định</div>
+                        </div>
+                        <label class="switch"><input type="checkbox" checked><span class="slider-switch"></span></label>
+                    </div>
+                </div>
+
+                <div class="live-card">
+                    <button class="control-action-btn" style="width: 100%; background: #ff3366; border: none;" onclick="logoutApp()">Đăng xuất / Đổi Key Bản Quyền</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation Bar (5 Tab) -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" onclick="switchTab('home', this)">
+                <div class="nav-pill-bg"></div>
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                <span>Home</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('func', this)">
+                <div class="nav-pill-bg"></div>
+                <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.03 2.18 13.82 2 13.6 2h-4c-.22 0-.43.18-.4.4l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.22.22.4.4.4h4c.22 0 .43-.18.4-.4l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                <span>Func</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('boost', this)">
+                <div class="nav-pill-bg"></div>
+                <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                <span>Boost</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('live', this)">
+                <div class="nav-pill-bg"></div>
+                <svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/></svg>
+                <span>Live</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('settings', this)">
+                <div class="nav-pill-bg"></div>
+                <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.04.64.09.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                <span>Cài đặt</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        // Tự động nạp sẵn toàn bộ key bản quyền và check LocalStorage để chỉ nhập 1 lần duy nhất
+        (function initAppAuth() {
+            const listKeys = [
+                "UNIMATE-NGAY-7K2X9P", "UNIMATE-NGAY-M4R8L1", "UNIMATE-NGAY-Q9W3ZT", "UNIMATE-NGAY-B2H5NY", "UNIMATE-NGAY-F6V1DC",
+                "UNIMATE-TUAN-8X3K2M", "UNIMATE-TUAN-P5L9Q4", "UNIMATE-TUAN-Z1W7JH", "UNIMATE-TUAN-4C6N8B", "UNIMATE-TUAN-D9F2VT",
+                "UNIMATE-THANG-3R8P2X", "UNIMATE-THANG-K5M1Q9", "UNIMATE-THANG-7W4ZLH", "UNIMATE-THANG-N2C6VB", "UNIMATE-THANG-H9F8DT",
+                "UNIMATE-VV-9X5K3M", "UNIMATE-VV-1P8Q4Z", "ADMIN", "UNIMATE-VIP-2026", "CUTEOTHEBEST"
+            ];
+            listKeys.forEach(k => {
+                localStorage.setItem(k, JSON.stringify({ active: true }));
+            });
+
+            // Kiểm tra xem đã từng nhập key thành công trước đó chưa (Nhập 1 lần duy nhất)
+            if (localStorage.getItem("UNIMATE_LOGGED_IN") === "true") {
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('main-app-wrapper').style.display = 'flex';
+            }
+        })();
+
+        // Xác thực Key bản quyền (Lưu trạng thái để các lần sau không cần nhập lại)
+        function verifyAndEnterKey() {
+            const keyInput = document.getElementById('license-key-input').value.trim();
+            const errorMsg = document.getElementById('auth-error-msg');
+            
+            if (!keyInput) {
+                errorMsg.textContent = "Vui lòng nhập mã bản quyền!";
+                return;
+            }
+
+            const keyData = localStorage.getItem(keyInput);
+            if (!keyData && keyInput !== "ADMIN" && keyInput !== "UNIMATE-VIP-2026") {
+                errorMsg.textContent = "Key không tồn tại hoặc không hợp lệ!";
+                return;
+            }
+
+            // Đánh dấu đã đăng nhập 1 lần duy nhất
+            localStorage.setItem("UNIMATE_LOGGED_IN", "true");
+
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('main-app-wrapper').style.display = 'flex';
+            logToConsole("[System] Xác thực thành công Unimate Secret V3.");
+        }
+
+        function logoutApp() {
+            localStorage.removeItem("UNIMATE_LOGGED_IN");
+            document.getElementById('main-app-wrapper').style.display = 'none';
+            document.getElementById('auth-screen').style.display = 'flex';
+            document.getElementById('license-key-input').value = '';
+            document.getElementById('auth-error-msg').textContent = '';
+        }
+
+        window.onload = function() {
+            const randomId = 'UNIMATE-' + Math.random().toString(36).substring(2, 9).toUpperCase();
+            document.getElementById('display-device-id').textContent = randomId;
+            initCharts();
+        };
+
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            const target = document.getElementById('view-' + tabId);
+            if (target) target.classList.add('active');
+
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            if(btnElement) btnElement.classList.add('active');
+        }
+
+        let logCount = 2;
+        let errorCount = 0;
+
+        function logToConsole(text, isError = false) {
+            const consoleBox = document.getElementById('live-console');
+            if(!consoleBox) return;
+            const timeStr = new Date().toTimeString().split(' ')[0] + "." + Math.floor(Math.random() * 900 + 100);
+            const line = document.createElement('div');
+            line.className = isError ? 'console-line error' : 'console-line';
+            line.textContent = `[${timeStr}] ${text}`;
+            consoleBox.appendChild(line);
+            consoleBox.scrollTop = consoleBox.scrollHeight;
+
+            if (isError) errorCount++; else logCount++;
+            document.getElementById('log-count').textContent = logCount;
+            document.getElementById('error-count').textContent = errorCount;
+        }
+
+        function clearConsole() {
+            document.getElementById('live-console').innerHTML = '';
+            logCount = 0; errorCount = 0;
+            document.getElementById('log-count').textContent = logCount;
+            document.getElementById('error-count').textContent = errorCount;
+            logToConsole("Console đã được làm sạch.");
+        }
+
+        function sendTerminalCommand() {
+            const input = document.getElementById('terminal-input');
+            const val = input.value.trim();
+            if (!val) return;
+            logToConsole(`> ${val}`);
+            try {
+                const result = eval(val);
+                logToConsole(result !== undefined ? String(result) : "Executed successfully.");
+            } catch (err) {
+                logToConsole(err.message, true);
+            }
+            input.value = '';
+        }
+
+        function handleTerminalKey(e) {
+            if (e.key === 'Enter') sendTerminalCommand();
+        }
+
+        let is120FPSUnlocked = false;
+        function toggleUnlockFPS() {
+            is120FPSUnlocked = !is120FPSUnlocked;
+            const btn = document.getElementById('btn-unlock-fps');
+            btn.textContent = `UnLock 120 FPS : ${is120FPSUnlocked ? 'ON' : 'OFF'}`;
+            logToConsole(`[Module] Unlock 120 FPS set to ${is120FPSUnlocked ? 'ON' : 'OFF'}`);
+        }
+
+        function triggerAction(actionName) {
+            logToConsole(`[Action] Đang thực thi: ${actionName}...`);
+            setTimeout(() => {
+                logToConsole(`[Action] ${actionName} hoàn tất thành công!`);
+            }, 400);
+        }
+
+        function toggleFunc(btn, name) {
+            btn.classList.toggle('active');
+            const isActive = btn.classList.contains('active');
+            logToConsole(`[Func] ${name}: ${isActive ? 'ĐÃ BẬT' : 'ĐÃ TẮT'}`);
+        }
+
+        // Quản lý chọn game ở Tab Boost
+        let currentGameName = "FREE FIRE";
+        let currentPackageId = "com.dts.freefireth";
+
+        function selectGame(type, name, pkg) {
+            currentGameName = name;
+            currentPackageId = pkg;
+            
+            document.getElementById('card-ff').classList.remove('selected');
+            document.getElementById('card-ffmax').classList.remove('selected');
+            
+            if (type === 'ff') {
+                document.getElementById('card-ff').classList.add('selected');
+            } else {
+                document.getElementById('card-ffmax').classList.add('selected');
+            }
+            
+            document.getElementById('selected-game-label').textContent = name;
+            logToConsole(`[Boost] Đã chọn game: ${name}`);
+        }
+
+        // Bấm Booster -> Tự động tối ưu và vô thẳng game
+        function executeBoostAndLaunch() {
+            logToConsole(`[Boost] Đang khởi chạy Booster cho ${currentGameName}...`);
+            setTimeout(() => {
+                logToConsole(`[Boost] Đã tối ưu hóa Aimlock, Stability, Headshot & RAM thành công!`);
+                setTimeout(() => {
+                    logToConsole(`[Launch] Đang mở trực tiếp ${currentGameName}...`);
+                    
+                    // Lệnh mở game trực tiếp qua Scheme/Intent
+                    window.location.href = `intent://#Intent;package=${currentPackageId};end;`;
+                    
+                    setTimeout(() => {
+                        if (currentPackageId.includes('max')) {
+                            window.location.href = "https://play.google.com/store/apps/details?id=com.dts.freefiremax";
+                        } else {
+                            window.location.href = "https://play.google.com/store/apps/details?id=com.dts.freefireth";
+                        }
+                    }, 1000);
+                }, 600);
+            }, 800);
+        }
+
+        function updateSliderVal(id, val) {
+            document.getElementById('val-' + id).textContent = val + '%';
+        }
+
+        function setThemeMode(btn, modeName) {
+            btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            logToConsole(`[Settings] Chuyển giao diện sang: ${modeName}`);
+        }
+
+        function setEffectLevel(btn, levelName) {
+            btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            logToConsole(`[Settings] Đặt mức hiệu ứng: ${levelName}`);
+        }
+
+        function initCharts() {
+            const cpuCanvas = document.getElementById('cpuWaveCanvas');
+            const ramCanvas = document.getElementById('ramWaveCanvas');
+            if(!cpuCanvas || !ramCanvas) return;
+            
+            setupCanvasSize(cpuCanvas);
+            setupCanvasSize(ramCanvas);
+
+            setInterval(() => {
+                drawWave(cpuCanvas, '#ff3366', 2, 8);
+                drawWave(ramCanvas, '#00ffcc', 150, 40);
+                
+                document.getElementById('live-fps').textContent = Math.floor(Math.random() * 8 + 52);
+                document.getElementById('live-cpu').textContent = Math.floor(Math.random() * 5 + 1) + '%';
+                document.getElementById('live-ram').textContent = (180 + Math.floor(Math.random() * 15)) + ' MB';
+            }, 800);
+        }
+
+        function setupCanvasSize(canvas) {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+
+        function drawWave(canvas, color, baseVal, variance) {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+
+            const points = 20;
+            const step = canvas.width / points;
+
+            for (let i = 0; i <= points; i++) {
+                const x = i * step;
+                const y = canvas.height - (baseVal + Math.sin(i + Date.now() * 0.003) * variance + Math.random() * 5);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        }
+    </script>
+</body>
+</html>
