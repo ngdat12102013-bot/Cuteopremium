@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Unimate Secret V3</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Unimate Secret V3">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0b090a">
+    
+    <link rel="manifest" href='data:application/manifest+json,{
+        "name": "Unimate Secret V3",
+        "short_name": "UnimateV3",
+        "start_url": "./",
+        "display": "standalone",
+        "background_color": "#0b090a",
+        "theme_color": "#ff3366"
+    }'>
+
+    <style>
+        :root {
+            --bg-color: #0b090a;
+            --card-bg: #161113;
+            --card-border: #2a1f22;
+            --accent-pink: #ff3366;
+            --accent-glow: rgba(255, 51, 102, 0.35);
+            --text-main: #f5f0f2;
+            --text-muted: #9e8a90;
+            --carbon-gradient: linear-gradient(135deg, #1c1518 0%, #0d0a0b 100%);
+            --titan-metal: linear-gradient(135deg, #2c2528 0%, #120e10 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: var(--carbon-gradient);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding-top: env(safe-area-inset-top);
+        }
+
+        /* Splash Screen chuyển động Unimate */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #0b090a; background-image: var(--carbon-gradient);
+            z-index: 99999; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .splash-logo-box { text-align: center; }
+        .splash-text {
+            font-size: 38px; font-weight: 900; color: #fff;
+            letter-spacing: 4px; text-transform: uppercase;
+            animation: pulseUnimate 1.5s infinite ease-in-out;
+            background: linear-gradient(135deg, #fff 30%, #ff3366 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px var(--accent-glow));
+        }
+        .splash-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 3px; margin-top: 8px; text-transform: uppercase; }
+        @keyframes pulseUnimate {
+            0% { transform: scale(0.9); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.7; }
+        }
+
+        /* Welcome Banner Home */
+        .welcome-banner {
+            background: linear-gradient(135deg, rgba(255,51,102,0.22), rgba(122,0,34,0.45));
+            border: 1px solid var(--accent-pink);
+            border-radius: 18px; padding: 24px 16px; text-align: center;
+            margin-bottom: 16px; box-shadow: 0 0 30px var(--accent-glow);
+        }
+        .welcome-banner h1 {
+            font-size: 26px; font-weight: 900; color: #fff;
+            letter-spacing: 2px; text-transform: uppercase;
+            text-shadow: 0 0 15px var(--accent-pink);
+        }
+
+        /* Màn hình Auth sang trọng & đẳng cấp */
+        #auth-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color); background-image: var(--carbon-gradient);
+            z-index: 9999; display: none; flex-direction: column;
+            justify-content: center; align-items: center; padding: 24px;
+        }
+
+        .auth-card {
+            background: linear-gradient(145deg, #181114, #0f0a0d);
+            border: 1px solid rgba(255, 51, 102, 0.4);
+            border-radius: 24px; padding: 28px 24px; width: 100%; max-width: 380px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 25px rgba(255,51,102,0.15);
+            text-align: center; position: relative; overflow: hidden;
+        }
+        .auth-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-pink), transparent);
+        }
+
+        .auth-logo {
+            width: 72px; height: 72px;
+            background: linear-gradient(135deg, #ff3366, #400012);
+            border-radius: 20px; margin: 0 auto 16px auto;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; font-weight: 900; color: #fff;
+            box-shadow: 0 0 25px var(--accent-glow);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .auth-card h2 { font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 6px; letter-spacing: 1px; }
+        .auth-card p { font-size: 11px; color: var(--text-muted); margin-bottom: 24px; letter-spacing: 0.5px; }
+        
+        .auth-input-group { display: flex; flex-direction: column; gap: 14px; }
+        .auth-input-group input {
+            background: #070506; border: 1px solid var(--card-border);
+            border-radius: 14px; padding: 15px 16px; color: #fff;
+            font-size: 13px; outline: none; text-align: center; letter-spacing: 1.5px;
+            font-weight: 700;
+        }
+        .auth-input-group input:focus { border-color: var(--accent-pink); box-shadow: 0 0 15px var(--accent-glow); }
+
+        .auth-btn {
+            background: linear-gradient(135deg, #ff3366 0%, #800020 100%);
+            color: white; border: none; padding: 15px;
+            border-radius: 14px; font-weight: 800; font-size: 13px;
+            letter-spacing: 1px; box-shadow: 0 6px 20px var(--accent-glow);
+            cursor: pointer; transition: transform 0.1s, box-shadow 0.2s;
+        }
+        .auth-btn:active { transform: scale(0.96); box-shadow: 0 2px 10px var(--accent-glow); }
+
+        .auth-error { color: #ff3366; font-size: 11px; margin-top: 12px; min-height: 16px; font-weight: 700; }
+        .device-info { margin-top: 18px; font-size: 11px; color: var(--text-muted); }
+
+        /* Giao diện chính */
+        #main-app-wrapper {
+            display: none; flex: 1; flex-direction: column; height: 100vh; overflow: hidden;
+        }
+
+        .top-status-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 20px; font-size: 13px; color: var(--text-muted);
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .app-container { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 90px; }
+        .view-section { display: none; animation: fadeIn 0.25s ease-in-out; }
+        .view-section.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-header {
+            background: var(--titan-metal); border: 1px solid var(--card-border);
+            border-radius: 16px; padding: 18px; margin-bottom: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        .section-header .subtitle {
+            font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
+            color: var(--accent-pink); font-weight: 700; margin-bottom: 4px;
+        }
+        .section-header h2 { font-size: 22px; font-weight: 800; letter-spacing: 0.5px; color: #fff; }
+
+        .profile-card, .live-card {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+        .profile-header-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+        .profile-avatar {
+            width: 54px; height: 54px; border-radius: 14px;
+            background: linear-gradient(135deg, #ff3366, #7a0022);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; font-weight: 800; color: #fff; box-shadow: 0 0 15px var(--accent-glow);
+        }
+        .profile-info h3 { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+        .profile-info p { font-size: 11px; color: var(--text-muted); }
+
+        .social-grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .social-btn {
+            background: #070506; border: 1px solid var(--card-border); border-radius: 12px;
+            padding: 12px; color: #fff; font-size: 12px; font-weight: 700; text-align: center;
+            text-decoration: none; display: flex; align-items: center; justify-content: center;
+        }
+
+        .info-table-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 13px;
+        }
+        .info-table-row:last-child { border-bottom: none; }
+        .info-label { color: var(--text-muted); }
+        .info-val { font-weight: 700; color: var(--accent-pink); }
+
+        /* BOOST STYLING */
+        .game-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+        .game-card-btn {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 16px; padding: 12px; display: flex; align-items: center; gap: 12px; cursor: pointer;
+        }
+        .game-card-btn.selected { border-color: var(--accent-pink); background: rgba(255,51,102,0.08); box-shadow: 0 0 15px var(--accent-glow); }
+        .game-card-thumb { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; background: #2a1f22; }
+        .game-card-name { font-size: 12px; font-weight: 800; color: #fff; }
+
+        .boost-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .booster-action-btn {
+            background: linear-gradient(135deg, #7a0022 0%, #400012 100%);
+            border: 1px solid var(--accent-pink); color: #fff; padding: 10px 20px;
+            border-radius: 14px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 15px var(--accent-glow);
+        }
+
+        .boost-item-row { background: #070506; border: 1px solid var(--card-border); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
+        .boost-item-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .boost-badge-num {
+            background: #1c1518; border: 1px solid var(--card-border); color: var(--accent-pink);
+            font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 8px; margin-right: 8px;
+        }
+        .boost-item-title { font-size: 12px; font-weight: 800; color: #fff; display: flex; align-items: center; }
+        .boost-item-val { font-size: 13px; font-weight: 800; color: var(--accent-pink); }
+
+        .slider-track-container { position: relative; height: 16px; display: flex; align-items: center; }
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; position: absolute; z-index: 2; cursor: pointer; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: #2a1f22; border-radius: 2px; }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%;
+            background: var(--accent-pink); margin-top: -6px; box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .circle-stats-container {
+            display: flex; align-items: center; gap: 20px; background: #070506;
+            border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; margin-top: 12px;
+        }
+        .circle-gauge {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: conic-gradient(var(--accent-pink) 0deg, #2a1f22 0deg);
+            display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+        .circle-gauge-inner {
+            width: 62px; height: 62px; border-radius: 50%; background: #070506;
+            display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: #fff;
+        }
+        .circle-sub-list { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+        .circle-sub-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); }
+        .circle-sub-row span:last-child { color: var(--accent-pink); font-weight: 700; }
+
+        /* LIVE TAB */
+        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+        .metric-box { background: #070506; border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .metric-label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+        .metric-value { font-size: 14px; color: #fff; font-weight: 800; }
+
+        .live-toggle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+        .live-toggle-box {
+            background: #070506; border: 1px solid var(--card-border); border-radius: 12px;
+            padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; color: #fff;
+        }
+
+        .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider-switch {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #1c1518; border: 1px solid var(--card-border); transition: .3s; border-radius: 22px;
+        }
+        .slider-switch:before {
+            position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px;
+            background-color: var(--text-muted); transition: .3s; border-radius: 50%;
+        }
+        input:checked + .slider-switch { background-color: var(--accent-pink); border-color: var(--accent-pink); }
+        input:checked + .slider-switch:before { transform: translateX(18px); background-color: white; }
+
+        .live-console-box {
+            background: #070506; border: 1px solid var(--card-border);
+            border-radius: 12px; padding: 12px; font-family: 'Courier New', Courier, monospace;
+            font-size: 11px; color: #00ffcc; height: 150px; overflow-y: auto; margin-bottom: 10px; line-height: 1.4;
+        }
+        .console-line { margin-bottom: 3px; word-break: break-all; }
+
+        .js-input-group { display: flex; gap: 8px; }
+        .js-input-group input {
+            flex: 1; background: #070506; border: 1px solid var(--card-border);
+            border-radius: 12px; padding: 12px 14px; color: #fff; font-size: 12px; outline: none;
+        }
+        .js-input-group input:focus { border-color: var(--accent-pink); }
+        .js-input-group button {
+            background: linear-gradient(135deg, #ff1a4a 0%, #b3002d 100%);
+            color: #fff; border: none; padding: 0 18px; border-radius: 12px; font-weight: 700; font-size: 12px; cursor: pointer;
+        }
+
+        .control-action-btn { background: #ff3366; color: #fff; border: none; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 12px; cursor: pointer; width: 100%; }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 70px;
+            background: rgba(16, 12, 14, 0.95); backdrop-filter: blur(20px);
+            border-top: 1px solid var(--card-border); display: flex;
+            justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); z-index: 1000;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: transparent; border: none; color: var(--text-muted);
+            font-size: 10px; font-weight: 500; width: 20%; height: 100%; cursor: pointer; position: relative;
+        }
+        .nav-item svg { width: 20px; height: 20px; margin-bottom: 3px; fill: currentColor; }
+        .nav-item.active { color: var(--accent-pink); }
+        .nav-pill-bg {
+            position: absolute; width: 50px; height: 32px;
+            background: rgba(255, 51, 102, 0.12); border-radius: 16px; z-index: -1; display: none;
+        }
+        .nav-item.active .nav-pill-bg { display: block; }
+    </style>
+</head>
+<body>
+
+    <!-- Splash Screen chuyển động Unimate -->
+    <div id="splash-screen">
+        <div class="splash-logo-box">
+            <div class="splash-text">UNIMATE</div>
+            <div class="splash-sub">SECRET V3 ENGINE</div>
+        </div>
+    </div>
+
+    <!-- Màn hình Auth sang trọng (Bí mật ẩn danh key ở tầng ngầm) -->
+    <div id="auth-screen">
+        <div class="auth-card">
+            <div class="auth-logo">US</div>
+            <h2>UNIMATE SECRET V3</h2>
+            <p>HỆ THỐNG XÁC THỰC BẢN QUYỀN CAO CẤP</p>
+            <div class="auth-input-group">
+                <input type="password" id="license-key-input" placeholder="NHẬP KEY BẢN QUYỀN..." autocomplete="off">
+                <button class="auth-btn" onclick="verifyAndEnterKey()">XÁC THỰC & VÀO APP</button>
+            </div>
+            <div class="auth-error" id="auth-error-msg"></div>
+            <div class="device-info">Mã thiết bị: <span id="display-device-id">Đang tải...</span></div>
+        </div>
+    </div>
+
+    <!-- Giao diện chính -->
+    <div id="main-app-wrapper">
+        <div class="top-status-bar">
+            <span id="current-time">18:58</span>
+            <span style="color: var(--accent-pink); font-weight: bold;">UNIMATE SECRET V3</span>
+            <span>48% ⚡</span>
+        </div>
+
+        <div class="app-container">
+
+            <!-- TAB 1: HOME -->
+            <div id="view-home" class="view-section active">
+                <div class="welcome-banner">
+                    <h1>WELCOME UNIMATE</h1>
+                </div>
+
+                <div class="profile-card">
+                    <div class="profile-header-row">
+                        <div class="profile-avatar">CC</div>
+                        <div class="profile-info">
+                            <h3>Cuteo</h3>
+                            <p>Developer / Admin</p>
+                        </div>
+                    </div>
+                    <div class="social-grid-4">
+                        <a href="https://facebook.com" target="_blank" class="social-btn">Facebook</a>
+                        <a href="https://zalo.me" target="_blank" class="social-btn">Zalo</a>
+                        <a href="https://tiktok.com" target="_blank" class="social-btn">TikTok 1</a>
+                        <a href="https://tiktok.com" target="_blank" class="social-btn">TikTok 2</a>
+                    </div>
+                </div>
+
+                <div class="profile-card">
+                    <div class="subtitle" style="margin-bottom: 10px;">THÔNG TIN ỨNG DỤNG</div>
+                    <div class="info-table-row"><span class="info-label">Tên ứng dụng</span><span class="info-val">Unimate Secret V3</span></div>
+                    <div class="info-table-row"><span class="info-label">Giao diện</span><span class="info-val">Dark Neon Red (Standalone)</span></div>
+                    <div class="info-table-row"><span class="info-label">Game hỗ trợ</span><span class="info-val">Free Fire / Free Fire MAX</span></div>
+                </div>
+            </div>
+
+            <!-- TAB 2: FUNC -->
+            <div id="view-func" class="view-section">
+                <div class="section-header">
+                    <div class="subtitle">Functions Matrix</div>
+                    <h2>12 TÍNH NĂNG CHUYÊN SÂU</h2>
+                </div>
+                <div class="live-card">
+                    <div class="subtitle" style="margin-bottom: 12px;">Hệ Thống Aim & Tâm Giao Diện</div>
+                    <div class="live-toggle-box"><span>Aimlock</span><label class="switch"><input type="checkbox" onchange="logFuncToggle(this, 'Aimlock')"><span class="slider-switch"></span></label></div>
+                    <div class="live-toggle-box" style="margin-top:8px;"><span>Khoá Đầu</span><label class="switch"><input type="checkbox" onchange="logFuncToggle(this, 'Khoá Đầu')"><span class="slider-switch"></span></label></div>
+                    <div class="live-toggle-box" style="margin-top:8px;"><span>Nhẹ Tâm</span><label class="switch"><input type="checkbox" onchange="logFuncToggle(this, 'Nhẹ Tâm')"><span class="slider-switch"></span></label></div>
+                    <div class="live-toggle-box" style="margin-top:8px;"><span>Đầm Tâm</span><label class="switch"><input type="checkbox" onchange="logFuncToggle(this, 'Đầm Tâm')"><span class="slider-switch"></span></label></div>
+                    <div class="live-toggle-box" style="margin-top:8px;"><span>Bám Đầu</span><label class="switch"><input type="checkbox" onchange="logFuncToggle(this, 'Bám Đầu')"><span class="slider-switch"></span></label></div>
+                    <div class="live-toggle-box" style="margin-top:8px;"><span>Tối Ưu All</span><label class="switch"><input type="checkbox" onchange="logFuncToggle(this, 'Tối Ưu All')"><span class="slider-switch"></span></label></div>
+                </div>
+            </div>
+
+            <!-- TAB 3: BOOST -->
+            <div id="view-boost" class="view-section">
+                <div class="game-select-grid">
+                    <div class="game-card-btn selected" id="card-ff" onclick="selectGame('ff', 'Free Fire', 'com.dts.freefireth')">
+                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=100&auto=format&fit=crop&q=80" class="game-card-thumb" alt="FF">
+                        <div class="game-card-name">FREE FIRE</div>
+                    </div>
+                    <div class="game-card-btn" id="card-ffmax" onclick="selectGame('ffmax', 'Free Fire MAX', 'com.dts.freefiremax')">
+                        <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=100&auto=format&fit=crop&q=80" class="game-card-thumb" alt="FF MAX">
+                        <div class="game-card-name">FREE FIRE MAX</div>
+                    </div>
+                </div>
+
+                <div class="live-card">
+                    <div class="boost-header-flex">
+                        <div>
+                            <div class="subtitle" id="selected-game-label" style="font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 2px;">FREE FIRE</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">Aligned sliders with mobile booster presentation.</div>
+                        </div>
+                        <button class="booster-action-btn" onclick="executeBoostAndLaunch()">BOOSTER</button>
+                    </div>
+
+                    <div class="boost-item-row">
+                        <div class="boost-item-top"><div class="boost-item-title"><span class="boost-badge-num">01</span> AIMLOCK</div><div class="boost-item-val" id="val-s1">0%</div></div>
+                        <div class="slider-track-container"><input type="range" min="0" max="100" value="0" oninput="updateBoostSlider('s1', this.value, 0)"></div>
+                    </div>
+                    <div class="boost-item-row">
+                        <div class="boost-item-top"><div class="boost-item-title"><span class="boost-badge-num">02</span> STABILITY ASSIST</div><div class="boost-item-val" id="val-s2">0%</div></div>
+                        <div class="slider-track-container"><input type="range" min="0" max="100" value="0" oninput="updateBoostSlider('s2', this.value, 1)"></div>
+                    </div>
+                    <div class="boost-item-row">
+                        <div class="boost-item-top"><div class="boost-item-title"><span class="boost-badge-num">03</span> AIM HOLD</div><div class="boost-item-val" id="val-s3">0%</div></div>
+                        <div class="slider-track-container"><input type="range" min="0" max="100" value="0" oninput="updateBoostSlider('s3', this.value, 2)"></div>
+                    </div>
+                    <div class="boost-item-row">
+                        <div class="boost-item-top"><div class="boost-item-title"><span class="boost-badge-num">04</span> HEADSHOT FIX</div><div class="boost-item-val" id="val-s4">0%</div></div>
+                        <div class="slider-track-container"><input type="range" min="0" max="100" value="0" oninput="updateBoostSlider('s4', this.value, 3)"></div>
+                    </div>
+                    <div class="boost-item-row">
+                        <div class="boost-item-top"><div class="boost-item-title"><span class="boost-badge-num">05</span> BULLET ALIGN</div><div class="boost-item-val" id="val-s5">0%</div></div>
+                        <div class="slider-track-container"><input type="range" min="0" max="100" value="0" oninput="updateBoostSlider('s5', this.value, 4)"></div>
+                    </div>
+
+                    <div class="circle-stats-container">
+                        <div class="circle-gauge" id="overall-circle-gauge">
+                            <div class="circle-gauge-inner" id="overall-percent-txt">0%</div>
+                        </div>
+                        <div class="circle-sub-list">
+                            <div class="circle-sub-row"><span>AIMLOCK</span><span id="circle-v1">0%</span></div>
+                            <div class="circle-sub-row"><span>STABILITY ASSIST</span><span id="circle-v2">0%</span></div>
+                            <div class="circle-sub-row"><span>AIM HOLD</span><span id="circle-v3">0%</span></div>
+                            <div class="circle-sub-row"><span>HEADSHOT FIX</span><span id="circle-v4">0%</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: LIVE -->
+            <div id="view-live" class="view-section">
+                <div class="section-header">
+                    <div class="subtitle">Realtime Monitor</div>
+                    <h2>SYSTEM CONTROLS & LOG</h2>
+                </div>
+
+                <div class="live-card">
+                    <div class="metrics-grid">
+                        <div class="metric-box"><span class="metric-label">FPS</span><span class="metric-value" id="live-fps">60</span></div>
+                        <div class="metric-box"><span class="metric-label">Frame</span><span class="metric-value">16.6 ms</span></div>
+                        <div class="metric-box"><span class="metric-label">CPU est</span><span class="metric-value">2%</span></div>
+                        <div class="metric-box"><span class="metric-label">RAM</span><span class="metric-value">195 MB</span></div>
+                    </div>
+
+                    <div class="live-toggle-grid">
+                        <div class="live-toggle-box"><span>UnLock 120 FPS</span><label class="switch"><input type="checkbox" onchange="runLiveActionSwitch(this, 'UnLock 120 FPS')"><span class="slider-switch"></span></label></div>
+                        <div class="live-toggle-box"><span>Dọn RAM</span><label class="switch"><input type="checkbox" onchange="runLiveActionSwitch(this, 'Dọn RAM')"><span class="slider-switch"></span></label></div>
+                        <div class="live-toggle-box"><span>Dọn CPU</span><label class="switch"><input type="checkbox" onchange="runLiveActionSwitch(this, 'Dọn CPU')"><span class="slider-switch"></span></label></div>
+                        <div class="live-toggle-box"><span>Tối Ưu RAM</span><label class="switch"><input type="checkbox" onchange="runLiveActionSwitch(this, 'Tối Ưu RAM')"><span class="slider-switch"></span></label></div>
+                        <div class="live-toggle-box"><span>Tối Ưu CPU</span><label class="switch"><input type="checkbox" onchange="runLiveActionSwitch(this, 'Tối Ưu CPU')"><span class="slider-switch"></span></label></div>
+                        <div class="live-toggle-box"><span>Tối Ưu FPS</span><label class="switch"><input type="checkbox" onchange="runLiveActionSwitch(this, 'Tối Ưu FPS')"><span class="slider-switch"></span></label></div>
+                    </div>
+                </div>
+
+                <div class="live-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="font-size: 13px; font-weight: 800; color: #fff;">COMMAND OUTPUT</span>
+                        <div style="font-size: 11px; color: var(--text-muted);">Logs <span id="log-count-badge" style="color:var(--accent-pink); font-weight:700;">5</span></div>
+                    </div>
+                    <div class="live-console-box" id="live-console">
+                        <div class="console-line">[17:22:24.067] Dọn RAM > mem: trim pools -> rebalance buckets -> reduce churn</div>
+                        <div class="console-line">[17:22:24.188] Dọn RAM > init: sync state -> verify checksum -> handoff to runtime</div>
+                        <div class="console-line">[17:22:24.284] Dọn RAM > io: flush queue -> ack packets -> update latency map</div>
+                        <div class="console-line">[17:22:24.404] Dọn RAM > mem: trim pools -> rebalance buckets -> reduce churn</div>
+                        <div class="console-line">[17:22:24.518] Dọn RAM > mem: trim pools -> rebalance buckets -> reduce churn</div>
+                    </div>
+                    <div class="js-input-group">
+                        <input type="text" id="js-cmd-input" placeholder="Nhập lệnh JS rồi Enter...">
+                        <button onclick="runCustomJsCommand()">Run</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: CÀI ĐẶT -->
+            <div id="view-settings" class="view-section">
+                <div class="section-header">
+                    <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent-pink); font-weight: 700; margin-bottom: 4px;">Configuration</div>
+                    <h2>CÀI ĐẶT HỆ THỐNG</h2>
+                </div>
+                <div class="live-card">
+                    <button class="control-action-btn" onclick="logoutApp()">Đăng xuất / Đổi Key Bản Quyền</button>
+                </div>
+            </div>
+
+        </div>
+
+        <nav class="bottom-nav">
+            <button class="nav-item active" onclick="switchTab('home', this)">
+                <div class="nav-pill-bg"></div>
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                <span>Home</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('func', this)">
+                <div class="nav-pill-bg"></div>
+                <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.03 2.18 13.82 2 13.6 2h-4c-.22 0-.43.18-.4.4l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.22.22.4.4.4h4c.22 0 .43-.18.4-.4l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                <span>Func</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('boost', this)">
+                <div class="nav-pill-bg"></div>
+                <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                <span>Boost</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('live', this)">
+                <div class="nav-pill-bg"></div>
+                <svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/></svg>
+                <span>Live</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('settings', this)">
+                <div class="nav-pill-bg"></div>
+                <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.04.64.09.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c-.12.22.37.29.59.22l2.39-.96c-.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                <span>Cài đặt</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        const sliderValues = [0, 0, 0, 0, 0];
+        let logCount = 5;
+
+        // Lưu bảng mã ẩn ngầm (Base64 vault mới)
+        const __vault__ = [
+            "VU4tOTlmOGM3YjItNjQyMy00NWU5LWFiNjktMTU3ZjRlZDIwMTFm",
+            "VU4tNGEyYjFjOGYtZTE1NS00ZTIyLWI5OTUtYzE2NmE2YWRiZWM4",
+            "VU4tN2RhYWI5YmQtZGY1My00MmUzLWI2OTEtM2FmYjQyNzE2YTk2",
+            "VU4tMzEzZGIwYWMtYmIyMS00ZWE1LTg4MjItMDk1YjQ1M2Q0NjEw",
+            "VU4tYmUyMmFmYjMtOGNiOS00ZjExLWI4N2MtZDk5MWZjNGYwY2Vk",
+            "VU4tNjg2NjcxM2UtMzIxMy00ODQzLTkyYmEtMzVkY2E4OWYwNGM1",
+            "VU4tYTc0NjM0MWYtMzk3MS00YWZlLTg2ZjYtZWVlOTk5ODdjMTgw",
+            "VU4tMDVkNGU1OWUtMTdhNS00MTgzLTk3OGUtMWE5ODIzNjQ1NTdi",
+            "VU4tY2I5MzY1YjYtYTI3NC00ZjIwLTgzMWQtMzI0ZDIzYTg5NWNj",
+            "VU4tMWNjMWYzYWMtMWMwNy00OWVjLWJiMDItNWU0ZTg5OTI3N2E0",
+            "V0stYTRlMWM1MmEtZjQ4Mi00MThjLTlhZmItYWM0ZGRmOTYxZTNj",
+            "V0stNDNjYTdmN2QtNmIzNS00NGE0LTg0YTQtODgxNGUxYjhkZmJj",
+            "V0stYzdiM2ZlNmYtYzY1Yi00YTgzLThiYzctNmRjNDUxZjZiZmYw",
+            "V0stNWFiMjI1MTctNGMxNC00M2I0LTg2NjMtZmUwM2Y2YTgyNWVm",
+            "V0stN2U0OGFhNjgtOWZkYy00MTgwLWJjOTAtNDhiMDJhMTI0YmM4",
+            "TU5LWE0ZDNmNjQyLWM3M2ItNGUwYi1hYjE3LWVkNTI5YzNkYTEyNA==",
+            "TU5LWI3ODIxOGZhLWE2MDctNDVlYy05Y2M0LTY5YzI2OGE5N2JiNA==",
+            "TU5LLWMzNGIxZTVmLTNhMTAtNDgxOS1iYzAzLTg0YTJmZDRmMjcxMQ==",
+            "TU5LLWQ5NTRhOTBiLTlhOTAtNDU3MC05YWUwLWI3Mjc0YjVjZDkyYw==",
+            "TU5LLWZlM2I0ODkxLTA5M2QtNGIxMS1hNmZlLWVkZDU1OWM1OTU0MQ==",
+            "UEVNLWYxZDI5MGEzLTgzZmUtNDc0ZS1hNjNhLTM5OGE5MjM0MTcxYw==",
+            "UEVNLTA2OWJjMzUyLWM1ZGYtNGJjNC1hOGQ5LWQ4NmJkZjQ2MzUxZQ==",
+            "UEVNLWE1MmVmNzExLWRhMjktNGQyYi1hMTZhLTU5YjYwZWM3NGFiYg==",
+            "UEVNLWI4NGNhM2Y1LTMxOGYtNDdiMS05NDRmLTU4NDJkZTMwNmY3MQ==",
+            "UEVNLWM5MjhiYTU3LTM0YTItNDc5Yi04YjZmLTI1MTRlZmQyOWQyYQ==",
+            "QURNSU4tRkZJUkUtVjMtSFVFLVBSTy1FTkdJTkUtOTk5OS1TSEVMTA=="
+        ];
+
+        function resolveVaultKey(k) {
+            try { return atob(k); } catch(e) { return ""; }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                if(splash) {
+                    splash.style.opacity = '0';
+                    splash.style.visibility = 'hidden';
+                }
+                initAppAuthFlow();
+            }, 1800);
+        });
+
+        function initAppAuthFlow() {
+            __vault__.forEach(enc => {
+                const raw = resolveVaultKey(enc);
+                if(raw) localStorage.setItem(raw, JSON.stringify({ active: true, hidden: true }));
+            });
+
+            const authScreen = document.getElementById('auth-screen');
+            const mainApp = document.getElementById('main-app-wrapper');
+            document.getElementById('display-device-id').textContent = 'UNIMATE-' + Math.random().toString(36).substring(2, 9).toUpperCase();
+
+            document.getElementById('js-cmd-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') runCustomJsCommand();
+            });
+            document.getElementById('license-key-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') verifyAndEnterKey();
+            });
+
+            if (localStorage.getItem("UNIMATE_LOGGED_IN") === "true") {
+                authScreen.style.display = 'none';
+                mainApp.style.display = 'flex';
+            } else {
+                authScreen.style.display = 'flex';
+                mainApp.style.display = 'none';
+            }
+        }
+
+        function verifyAndEnterKey() {
+            const keyInput = document.getElementById('license-key-input').value.trim();
+            const errorMsg = document.getElementById('auth-error-msg');
+            
+            if (!keyInput) {
+                errorMsg.textContent = "Vui lòng nhập mã bản quyền!";
+                return;
+            }
+
+            const keyData = localStorage.getItem(keyInput);
+            if (!keyData) {
+                errorMsg.textContent = "Key không hợp lệ!";
+                return;
+            }
+
+            errorMsg.textContent = "";
+            localStorage.setItem("UNIMATE_LOGGED_IN", "true");
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('main-app-wrapper').style.display = 'flex';
+        }
+
+        function logoutApp() {
+            localStorage.removeItem("UNIMATE_LOGGED_IN");
+            document.getElementById('main-app-wrapper').style.display = 'none';
+            document.getElementById('auth-screen').style.display = 'flex';
+        }
+
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            const target = document.getElementById('view-' + tabId);
+            if (target) target.classList.add('active');
+
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            if(btnElement) btnElement.classList.add('active');
+        }
+
+        let currentGameName = "FREE FIRE";
+        let currentPackageId = "com.dts.freefireth";
+
+        function selectGame(type, name, pkg) {
+            currentGameName = name;
+            currentPackageId = pkg;
+            document.getElementById('card-ff').classList.remove('selected');
+            document.getElementById('card-ffmax').classList.remove('selected');
+            if (type === 'ff') document.getElementById('card-ff').classList.add('selected');
+            else document.getElementById('card-ffmax').classList.add('selected');
+            document.getElementById('selected-game-label').textContent = name;
+        }
+
+        function updateBoostSlider(id, val, index) {
+            document.getElementById('val-' + id).textContent = val + '%';
+            sliderValues[index] = Number(val);
+            
+            if(index < 4) {
+                document.getElementById('circle-v' + (index + 1)).textContent = val + '%';
+            }
+
+            const avg = Math.round(sliderValues.reduce((a,b)=>a+b, 0) / 5);
+            document.getElementById('overall-percent-txt').textContent = avg + '%';
+            const gauge = document.getElementById('overall-circle-gauge');
+            const deg = Math.round((avg / 100) * 360);
+            gauge.style.background = `conic-gradient(var(--accent-pink) ${deg}deg, #2a1f22 ${deg}deg)`;
+        }
+
+        function executeBoostAndLaunch() {
+            appendConsoleLog(`[Boost] Kích hoạt cấu hình ${currentGameName} với index vòng tròn trung bình.`);
+            setTimeout(() => {
+                const isMax = currentPackageId.includes('max');
+                const schemeIntent = isMax ? 'freefiremax://' : 'freefire://';
+                window.location.href = schemeIntent;
+                appendConsoleLog(`[Launch] Hook package ${currentPackageId} native scheme.`);
+            }, 500);
+        }
+
+        function logFuncToggle(cb, name) {
+            appendConsoleLog(`[Func Matrix] ${name}: ${cb.checked ? 'ON' : 'OFF'}`);
+        }
+
+        function runLiveActionSwitch(cb, name) {
+            appendConsoleLog(`[Realtime Controls] ${name} -> ${cb.checked ? 'ON (Executed)' : 'OFF (Reverted)'}`);
+        }
+
+        function runCustomJsCommand() {
+            const input = document.getElementById('js-cmd-input');
+            const val = input.value.trim();
+            if(!val) return;
+            appendConsoleLog(`[JS-Exec] input: "${val}" -> status: OK (simulated payload injected)`);
+            input.value = '';
+        }
+
+        function appendConsoleLog(text) {
+            const box = document.getElementById('live-console');
+            if(!box) return;
+            const now = new Date();
+            const timeStr = now.toTimeString().split(' ')[0] + '.' + String(now.getMilliseconds()).padStart(3, '0');
+            const line = document.createElement('div');
+            line.className = 'console-line';
+            line.textContent = `[${timeStr}] ${text}`;
+            box.appendChild(line);
+            box.scrollTop = box.scrollHeight;
+            logCount++;
+            document.getElementById('log-count-badge').textContent = logCount;
+        }
+    </script>
+</body>
+</html>
