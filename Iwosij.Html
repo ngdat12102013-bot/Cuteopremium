@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unimate Secret - Uchiha V5</title>
+    <style>
+        :root { --bg: #09090b; --card: #18181b; --accent: #dc2626; --text: #fafafa; --muted: #71717a; --green: #22c55e; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'JetBrains Mono', 'Segoe UI', sans-serif; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 15px; }
+        .hidden { display: none !important; }
+        .panel { width: 100%; max-width: 440px; background: var(--card); border: 1px solid rgba(220,38,38,0.4); border-radius: 12px; box-shadow: 0 0 25px rgba(220,38,38,0.2); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #7f1d1d, #18181b); padding: 18px; border-bottom: 1px solid rgba(220,38,38,0.3); display: flex; align-items: center; gap: 12px; }
+        .header img { width: 45px; height: 45px; border-radius: 8px; border: 1px solid var(--accent); object-fit: cover; }
+        .header-info h1 { font-size: 1.1rem; color: #fff; letter-spacing: 0.5px; }
+        .header-info span { font-size: 0.75rem; color: #fca5a5; }
+        .body { padding: 20px; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; }
+        .input-group input { width: 100%; padding: 10px 12px; background: #09090b; border: 1px solid #27272a; border-radius: 6px; color: #fff; font-size: 0.9rem; outline: none; }
+        .input-group input:focus { border-color: var(--accent); }
+        .btn { width: 100%; padding: 10px; background: var(--accent); border: none; border-radius: 6px; color: #fff; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
+        .btn:hover { background: #b91c1c; }
+        .status-msg { margin-top: 10px; font-size: 0.8rem; text-align: center; height: 18px; }
+        
+        /* Uchiha V5 Module list */
+        .module-list { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; max-height: 280px; overflow-y: auto; padding-right: 4px; }
+        .module-item { display: flex; justify-content: space-between; align-items: center; background: #09090b; padding: 10px 14px; border-radius: 6px; border: 1px solid #27272a; font-size: 0.85rem; }
+        .switch { position: relative; display: inline-block; width: 38px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #27272a; transition: .2s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .2s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--green); }
+        input:checked + .slider:before { transform: translateX(18px); }
+        
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; background: rgba(220,38,38,0.2); color: #f87171; margin-bottom: 12px; }
+        .footer-action { margin-top: 15px; display: flex; gap: 10px; }
+        .btn-secondary { background: #27272a; color: #e4e4e7; }
+        .btn-secondary:hover { background: #3f3f46; }
+    </style>
+</head>
+<body>
+
+    <!-- Auth Screen -->
+    <div class="panel" id="authScreen">
+        <div class="header">
+            <img src="https://api.dicebear.com/7.x/bottts/svg?seed=cuteo" alt="logo">
+            <div class="header-info">
+                <h1>UNIMATE SECRET</h1>
+                <span>UCHIHA V5 // Admin: cuteo</span>
+            </div>
+        </div>
+        <div class="body">
+            <div class="input-group">
+                <label>Key kích hoạt hệ thống</label>
+                <input type="text" id="keyInput" placeholder="Nhập key của bạn...">
+            </div>
+            <button class="btn" onclick="verifyKey()">KÍCH HOẠT V5</button>
+            <div class="status-msg" id="statusMsg"></div>
+        </div>
+    </div>
+
+    <!-- Main Uchiha V5 Menu -->
+    <div class="panel hidden" id="mainApp">
+        <div class="header">
+            <img src="https://api.dicebear.com/7.x/bottts/svg?seed=cuteo" alt="logo">
+            <div class="header-info">
+                <h1>UCHIHA V5 PANEL</h1>
+                <span id="expiryInfo">Gói: Member</span>
+            </div>
+        </div>
+        <div class="body">
+            <span class="badge" id="roleBadge">ROLE: MEMBER</span>
+            <div class="module-list">
+                <div class="module-item"><span>Anti-Lag / Booster</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+                <div class="module-item"><span>Smooth Aim Assist</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+                <div class="module-item"><span>ESP Box / Info</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+                <div class="module-item"><span>Config Override v5</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+            </div>
+            <div class="footer-action">
+                <button class="btn btn-secondary" onclick="logout()">Đổi Key</button>
+                <button class="btn" style="flex:1;" onclick="alert('Đã đồng bộ config Uchiha V5!')">Lưu cấu hình</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const KEY_DATABASE = {
+            "UNI-VIP-DAT-9999": { type: "VIP_DAT", expire: "Lifetime (Đặc quyền Đạt)" },
+            "UNI-DAY-001": { type: "Ngày", expire: "24h" }, "UNI-DAY-002": { type: "Ngày", expire: "24h" },
+            "UNI-DAY-003": { type: "Ngày", expire: "24h" }, "UNI-DAY-004": { type: "Ngày", expire: "24h" },
+            "UNI-DAY-005": { type: "Ngày", expire: "24h" }, "UNI-DAY-006": { type: "Ngày", expire: "24h" },
+            "UNI-DAY-007": { type: "Ngày", expire: "24h" }, "UNI-DAY-008": { type: "Ngày", expire: "24h" },
+            "UNI-DAY-009": { type: "Ngày", expire: "24h" }, "UNI-DAY-010": { type: "Ngày", expire: "24h" },
+            "UNI-WEEK-001": { type: "Tuần", expire: "7 ngày" }, "UNI-WEEK-002": { type: "Tuần", expire: "7 ngày" },
+            "UNI-WEEK-003": { type: "Tuần", expire: "7 ngày" }, "UNI-WEEK-004": { type: "Tuần", expire: "7 ngày" },
+            "UNI-WEEK-005": { type: "Tuần", expire: "7 ngày" }, "UNI-WEEK-006": { type: "Tuần", expire: "7 ngày" },
+            "UNI-WEEK-007": { type: "Tuần", expire: "7 ngày" }, "UNI-WEEK-008": { type: "Tuần", expire: "7 ngày" },
+            "UNI-WEEK-009": { type: "Tuần", expire: "7 ngày" }, "UNI-WEEK-010": { type: "Tuần", expire: "7 ngày" },
+            "UNI-MON-001": { type: "Tháng", expire: "30 ngày" }, "UNI-MON-002": { type: "Tháng", expire: "30 ngày" },
+            "UNI-MON-003": { type: "Tháng", expire: "30 ngày" }, "UNI-MON-004": { type: "Tháng", expire: "30 ngày" },
+            "UNI-MON-005": { type: "Tháng", expire: "30 ngày" }, "UNI-MON-006": { type: "Tháng", expire: "30 ngày" },
+            "UNI-MON-007": { type: "Tháng", expire: "30 ngày" }, "UNI-MON-008": { type: "Tháng", expire: "30 ngày" },
+            "UNI-MON-009": { type: "Tháng", expire: "30 ngày" }, "UNI-MON-010": { type: "Tháng", expire: "30 ngày" },
+            "UNI-PERM-001": { type: "Vĩnh viễn", expire: "Lifetime" }, "UNI-PERM-002": { type: "Vĩnh viễn", expire: "Lifetime" },
+            "UNI-PERM-003": { type: "Vĩnh viễn", expire: "Lifetime" }, "UNI-PERM-004": { type: "Vĩnh viễn", expire: "Lifetime" },
+            "UNI-PERM-005": { type: "Vĩnh viễn", expire: "Lifetime" }, "UNI-PERM-006": { type: "Vĩnh viễn", expire: "Lifetime" },
+            "UNI-PERM-007": { type: "Vĩnh viễn", expire: "Lifetime" }, "UNI-PERM-008": { type: "Vĩnh viễn", expire: "Lifetime" },
+            "UNI-PERM-009": { type: "Vĩnh viễn", expire: "Lifetime" }, "UNI-PERM-010": { type: "Vĩnh viễn", expire: "Lifetime" }
+        };
+
+        window.onload = function() {
+            const saved = localStorage.getItem('uchiha_v5_key');
+            if (saved && KEY_DATABASE[saved]) activateUI(saved);
+        };
+
+        function verifyKey() {
+            const val = document.getElementById('keyInput').value.trim();
+            const msg = document.getElementById('statusMsg');
+            if (KEY_DATABASE[val]) {
+                localStorage.setItem('uchiha_v5_key', val);
+                activateUI(val);
+            } else {
+                msg.style.color = '#ef4444';
+                msg.innerText = '[!] Key không hợp lệ!';
+            }
+        }
+
+        function activateUI(key) {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            const data = KEY_DATABASE[key];
+            document.getElementById('expiryInfo').innerText = `Hạn: ${data.expire}`;
+            document.getElementById('roleBadge').innerText = key === 'UNI-VIP-DAT-9999' ? 'OWNER: ĐẠT (VIP)' : `GÓI: ${data.type.toUpperCase()}`;
+        }
+
+        function logout() {
+            localStorage.removeItem('uchiha_v5_key');
+            location.reload();
+        }
+    </script>
+</body>
+</html>
